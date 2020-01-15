@@ -1,0 +1,50 @@
+---
+# file: hamlib/main.yml
+- name: install hamlib
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: check installed hamlib version
+      shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | sed 's/rigctl(d),\ Hamlib\ //'; else echo "NOT INSTALLED"; fi 
+      register: hamlib
+      changed_when: false
+    - debug: msg="{{ hamlib.stdout }}"
+  
+    - name: check latest hamlib version
+      shell: |
+        curl -s https://sourceforge.net/projects/hamlib/files/latest/download | 
+        grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] | 
+        head -n 1 | awk -F "/" '{print $7}'
+      register: newhamlib
+      args:
+        warn: no
+      changed_when: false
+
+    - debug: msg="{{ newhamlib.stdout  }}"
+
+    - name: install hamlib dependencies
+      become: yes
+      apt:
+        pkg:
+        - cmake
+        - build-essential
+        - libusb-1.0-0-dev
+        - libltdl-dev
+        - libusb-1.0-0
+        - libhamlib-utils
+        - libsamplerate0
+        - libsamplerate0-dev
+        - libsigx-2.0-dev
+        - libsigc++-2.0-dev
+        - libpopt-dev
+        - tcl8.6-dev
+        - libspeex-dev
+        - libasound2-dev
+        - alsa-utils
+        - libgcrypt20-dev
+        - libfltk1.3-dev
+        - libpng++-dev
+        - portaudio19-dev
+        - libpulse-dev
+        - libportaudiocpp0
+        - libsndfile1-dev
