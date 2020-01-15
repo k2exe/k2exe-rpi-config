@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Flrig
+GenericName=Amateur Radio Digital Modem
+Comment=Amateur Radio Sound Card Communications
+Exec=flrig
+Icon=flrig
+Terminal=false
+Type=Application
+Categories=Network;HamRadio;

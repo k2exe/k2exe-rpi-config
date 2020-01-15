@@ -1,0 +1,32 @@
+---
+# file: piardop/main.yml
+- name: piardop
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - set_fact: piardop="NOT INSTALLED" 
+    - name: latest piardop version check
+      shell: |
+        curl -s http://www.cantab.net/users/john.wiseman/Downloads/Beta/ | grep 'href="piardopc"' | grep -o 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
+      register: piardop_online
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: newpiardop="{{ piardop_online.stdout }}" 
+
+    - name: create piardop folder
+      file: 
+        path: /home/pi/piardop
+        state: directory
+
+    - name: download piardop to /home/pi/piardop
+      get_url: 
+        url: http://www.cantab.net/users/john.wiseman/Downloads/Beta/piardopc
+        dest: /home/pi/piardop/piardopc
+        mode: '0755'
+
+    - name: .asoundrc config
+      file:
+        src: .asoundrc
+        dest: /home/pi/.asoundrc
+        state: hard

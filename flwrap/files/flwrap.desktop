@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=FLWRAP
+GenericName=Amateur Radio Digital Modem
+Comment=Amateur Radio Sound Card Communications
+Exec=flwrap
+Icon=flwrap
+Terminal=false
+Type=Application
+Categories=Network;HamRadio;

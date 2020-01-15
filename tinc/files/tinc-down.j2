@@ -1,0 +1,5 @@
+#!/bin/sh
+# ifconfig $INTERFACE down
+ip route del {{ k2exe_subnet }} dev $INTERFACE
+ip addr del {{ k2exe_ip }} dev $INTERFACE
+ip link set $INTERFACE down

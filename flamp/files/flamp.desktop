@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Flamp
+GenericName=Amateur Radio Digital Modem
+Comment=Amateur Radio Sound Card Communications
+Exec=flamp
+Icon=flamp
+Terminal=false
+Type=Application
+Categories=Network;HamRadio;

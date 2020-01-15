@@ -1,0 +1,54 @@
+---
+# file: chirp/main.yml
+- name: chirp
+  hosts: localhost
+  connection: localhost
+  tasks:
+# weirdly broken, always returns blank due to non-zero exit code from chirpw?
+    - name: get installed chirp version
+      shell: | 
+        if hash chirpw 2>/dev/null; then
+          chirpw --version 2>/dev/null | awk -F 'daily-' '{print $2}' | head -c 8
+        else
+          echo "NOT INSTALLED"
+        fi
+      register: chirp_version
+      changed_when: false
+    - set_fact: chirp="{{ chirp_version.stdout }}"
+    - debug: msg="{{ chirp }}"
+
+    - name: check latest chirp version online
+      shell: curl -s https://trac.chirp.danplanet.com/chirp_daily/LATEST/ |
+        grep .tar.gz | awk -F 'chirp-daily-' '{print $2}' | head -c 8
+      register: chirp_online
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: newchirp="{{ chirp_online.stdout }}"
+    - debug: msg="{{ newchirp }}"
+
+    - name: install or update to the latest version of chirp
+      set_fact:
+        chirp_install: "{{ 'true' if ( chirp == 'NOT INSTALLED' ) else 'false' }}"
+    - debug: msg="{{ chirp_install }}"
+
+    - name: install prerequisites
+      become: yes
+      apt:
+        pkg:
+        - python-gtk2 
+        - python-serial 
+        - python-libxml2
+      when: chirp_install
+    - name: download chirp and extract
+      unarchive: 
+        src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{newchirp}}.tar.gz
+        dest: /home/pi/
+        remote_src: yes
+        creates: /home/pi/chirp-daily-{{newchirp}}
+      when: chirp_install
+
+    - name: install chirp
+      become: yes
+      command: 'python setup.py install chdir=/home/pi/chirp-daily-{{newchirp}}'
+      when: chirp_install

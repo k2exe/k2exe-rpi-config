@@ -1,0 +1,5 @@
+---
+# file: tinc/vars/main.yml
+k2exe_node_name: "bbs"
+k2exe_subnet: "44.68.204.0/28"
+k2exe_ip: "44.68.204.3"

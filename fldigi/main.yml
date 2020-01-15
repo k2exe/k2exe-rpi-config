@@ -1,0 +1,92 @@
+---
+# file: fldigi/main.yml
+- name: fldigi
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: get installed fldigi version
+      shell: |
+        if hash fldigi 2>/dev/null; then 
+            fldigi --version | awk 'FNR == 1 {print $2 }'
+        else echo "NOT INSTALLED" 
+        fi
+      register: fldigi_version 
+      changed_when: false
+
+    - set_fact: fldigi="{{ fldigi_version.stdout }}"
+
+    - name: check latest fldigi version from sourceforge
+      shell: curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
+      register: fldigi_online
+      args:
+        warn: no
+      changed_when: false
+
+    - set_fact: newfldigi="{{ fldigi_online.stdout }}"
+
+    - name: install or update to the latest version of fldigi
+      set_fact:
+        fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
+    - debug: msg="{{ fldigi_install }}"
+
+    - name: install fldigi dependencies
+      become: yes
+      apt:
+        pkg: 
+        - cmake
+        - build-essential
+        - libusb-1.0-0-dev
+        - libltdl-dev
+        - libusb-1.0-0
+        - libhamlib-utils
+        - libsamplerate0
+        - libsamplerate0-dev
+        - libsigx-2.0-dev
+        - libsigc++-2.0-dev
+        - libpopt-dev
+        - tcl8.6-dev
+        - libspeex-dev
+        - libasound2-dev
+        - alsa-utils
+        - libgcrypt20-dev
+        - libfltk1.3-dev
+        - libpng++-dev
+        - portaudio19-dev
+        - libpulse-dev
+        - libportaudiocpp0
+        - libsndfile1-dev
+      when: fldigi_install
+
+    - name: download fldigi and extract
+      unarchive:
+        src: https://sourceforge.net/projects/fldigi/files/fldigi/fldigi-{{ newfldigi }}.tar.gz
+        dest: /home/pi/
+        remote_src: yes
+        creates: /home/pi/fldigi-{{newfldigi}}
+      when: fldigi_install
+
+    - name: ./configure fldigi
+      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      with_items:
+      - ./configure
+      when: fldigi_install
+
+    - name: make fldigi 
+      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      with_items:
+      - make
+      when: fldigi_install
+
+    - name: install fldigi
+      become: yes
+      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      with_items:
+      - make install
+      when: fldigi_install
+
+    - name: install fldigi desktop icon
+      copy:
+        src: fldigi.desktop
+        dest: /home/pi/Desktop/fldigi.desktop
+        mode: "0644"
+      when: fldigi_install

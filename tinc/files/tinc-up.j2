@@ -1,0 +1,6 @@
+#!/bin/sh
+#ifconfig $INTERFACE {{ k2exe_ip }} netmask 255.255.255.240
+ip link set $INTERFACE up
+ip addr add {{ k2exe_ip }} dev $INTERFACE
+ip route add {{ k2exe_subnet }} dev $INTERFACE
+#ip route add default dev $INTERFACE via 44.68.204.1 onlink

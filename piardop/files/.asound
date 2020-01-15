@@ -1,0 +1,7 @@
+pcm.ARDOP {
+type rate
+slave {
+pcm "\""hw:1,0"\""
+rate 48000
+}
+}

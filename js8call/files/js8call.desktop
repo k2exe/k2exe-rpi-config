@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=JS8Call
+GenericName=JS8Call
+Comment=Amateur Radio Weak Signal mode
+Exec=js8call
+Icon=js8call_icon
+Terminal=false
+Type=Application
+Categories=Network;HamRadio;

@@ -1,0 +1,63 @@
+---
+# file: flrig/main.yml
+- name: flrig
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: get installed flrig version
+      shell: |
+        if hash flrig 2>/dev/null; then
+            flrig --version | awk 'FNR == 1 {print $2}'
+        else
+            echo "NOT INSTALLED"
+        fi
+      register: flrig_version 
+      changed_when: false
+    - set_fact: flrig="{{ flrig_version.stdout }}"
+
+    - name: check latest flrig version from sourceforge
+      shell: curl -s https://sourceforge.net/projects/fldigi/files/flrig/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      register: flrig_online
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: newflrig="{{  flrig_online.stdout  }}"
+
+    - name: install or update to the latest version of flrig
+      set_fact:
+        flrig_install: "{{ 'true' if ( flrig != newflrig ) else 'false' }}"
+    - debug: msg="{{ flrig_install }}"
+
+    - name: download flrig and extract
+      unarchive:
+        src: https://sourceforge.net/projects/fldigi/files/flrig/flrig-{{ newflrig }}.tar.gz
+        dest: /home/pi/
+        remote_src: yes
+        creates: /home/pi/flrig-{{newflrig}}
+      when: flrig_install
+
+    - name: ./configure flrig
+      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      with_items:
+      - ./configure
+      when: flrig_install
+
+    - name: make flrig 
+      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      with_items:
+      - make
+      when: flrig_install
+
+    - name: install flrig
+      become: yes
+      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      with_items:
+      - make install
+      when: flrig_install
+
+    - name: install flrig desktop icon
+      copy:
+        src: flrig.desktop
+        dest: /home/pi/Desktop/flrig.desktop
+        mode: "0644"
+      when: flrig_install

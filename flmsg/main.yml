@@ -1,0 +1,63 @@
+---
+# file: flmsg/main.yml
+- name: flmsg
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: get installed flmsg version
+      shell: |
+        if hash flmsg 2>/dev/null; then
+            flmsg --version | awk 'FNR == 1 {print $2}'
+        else
+            echo "NOT INSTALLED"
+        fi
+      register: flmsg_version 
+      changed_when: false
+    - set_fact: flmsg="{{ flmsg_version.stdout }}"
+
+    - name: check latest flmsg version from sourceforge
+      shell: curl -s https://sourceforge.net/projects/fldigi/files/flmsg/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      register: flmsg_online
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: newflmsg="{{  flmsg_online.stdout  }}"
+
+    - name: install or update to the latest version of flmsg
+      set_fact:
+        flmsg_install: "{{ 'true' if ( flmsg != newflmsg ) else 'false' }}"
+    - debug: msg="{{ flmsg_install }}"
+
+    - name: download flmsg and extract
+      unarchive:
+        src: https://sourceforge.net/projects/fldigi/files/flmsg/flmsg-{{ newflmsg }}.tar.gz
+        dest: /home/pi/
+        remote_src: yes
+        creates: /home/pi/flmsg-{{newflmsg}}
+      when: flmsg_install
+
+    - name: ./configure flmsg
+      command: '{{ item }} chdir=/home/pi/flmsg-{{newflmsg}}'
+      with_items:
+      - ./configure
+      when: flmsg_install
+
+    - name: make flmsg 
+      command: '{{ item }} chdir=/home/pi/flmsg-{{newflmsg}}'
+      with_items:
+      - make
+      when: flmsg_install
+
+    - name: install flmsg
+      become: yes
+      command: '{{ item }} chdir=/home/pi/flmsg-{{newflmsg}}'
+      with_items:
+      - make install
+      when: flmsg_install
+
+    - name: install flmsg desktop icon
+      copy:
+        src: flmsg.desktop
+        dest: /home/pi/Desktop/flmsg.desktop
+        mode: "0644"
+      when: flmsg_install

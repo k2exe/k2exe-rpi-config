@@ -1,0 +1,63 @@
+---
+# file: js8call/main.yml 
+- name: js8call 
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: get installed js8call version
+      shell: |
+        if hash js8call 2>/dev/null; then
+            echo "Installed-v. unknown"
+        else echo "NOT INSTALLED"
+        fi
+      register: js8call_version
+      changed_when: false
+    - set_fact: js8call="{{ js8call_version.stdout }}"
+
+    - name: lastest js8call version check
+      shell: |
+        curl -s http://files.js8call.com/latest.html | grep "<strong>" | 
+        grep -o [0-9].[0-9]
+      register: js8call_online
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: newjs8call="{{ js8call_online.stdout }}" 
+
+    - name: get js8call download link
+      shell: |
+        curl -s http://files.js8call.com/latest.html | 
+        grep -o "http://files.js8call.com/[0-9].[0-9].[0-9]/js8call_[0-9].[0-9].[0-9]_armhf.deb" | head -n 1
+      register: js8call_download
+      args:
+        warn: no
+      changed_when: false
+    - set_fact: js8call_url="{{ js8call_download.stdout }}"
+
+    - name: install js8call if not installed
+      set_fact: 
+        js8call_install: "{{ 'true' if ( js8call == 'NOT INSTALLED' ) else 'false' }}"
+    - debug: msg="{{ js8call_install }}"
+
+    - name: install js8call dependencies
+      become: yes
+      apt:
+        pkg: 
+        - libqt5multimedia5
+        - libqt5multimedia5-plugins
+        - libqt5multimediaidgets5
+        - libqt5serialport5
+      when: js8call_install
+
+    - name: download js8call deb file and install
+      become: yes
+      apt: 
+        deb: "{{ js8call_url }}"
+      when: js8call_install
+
+    - name: install js8call desktop icon
+      copy:
+        src: js8call.desktop
+        dest: /home/pi/Desktop/js8call.desktop
+        mode: "0644"
+      when: js8call_install
