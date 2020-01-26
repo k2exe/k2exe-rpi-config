@@ -4,17 +4,13 @@
   tags:
   - fldigi,nbems
 - import_playbook: flamp/main.yml
-  tags:
-  - flampi,nbems
+  tags: [ flampi, nbems ]
 - import_playbook: flmsg/main.yml
-  tags:
-  - flmsg,nbems
+  tags: [ flmsg, nbems ]
 - import_playbook: flrig/main.yml
-  tags:
-  - flrig,nbems
+  tags: [ flrig, nbems ]
 - import_playbook: flwrap/main.yml
-  tags:
-  - flwrap,nbems
+  tags: [ flwrap, nbems ]
 - import_playbook: hamlib/main.yml
   tags:
   - hamlib
@@ -24,6 +20,9 @@
 - import_playbook: js8call/main.yml
   tags:
   - js8call
+- import_playbook: pat/main.yml
+  tags:
+  - pat
 - import_playbook: piardop/main.yml
   tags:
   - piardop
