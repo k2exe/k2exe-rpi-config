@@ -21,7 +21,7 @@ I created these to improve uppon some of the other raspberry pi installer script
 When installing on a new pi I always remember to create an empty file called ssh to enable remote ssh login. Don't forget to change your password upon your first login to the pi.
 
 ```bash
-curl -o- https://raw.githubusercontent.com/k2exe/k2exe-rpi-config/master/install.sh | bash 
+curl -o- https://git.io/JJuqZ | bash 
 ```
 
 The installer script will install git and ansible which are both required for installation and updating of software on the pi.
