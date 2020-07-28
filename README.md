@@ -20,13 +20,25 @@ I created these to improve uppon some of the other raspberry pi installer script
 
 When installing on a new pi I always remember to create an empty file called ssh to enable remote ssh login. Don't forget to change your password upon your first login to the pi.
 
+My procedure:
+login via ssh
+sudo raspi-config
+do the following:
+change password for pi user
+setup hostname
+expand filesystem to fill sd card
+configure timezone
+configure wireless region
+
+exit installer and reboot
+then log back and run the following to install this package
+
 ```bash
-curl -o- https://git.io/JJuqZ | bash 
+curl -o- -L https://git.io/JJuqZ | bash 
 ```
 
 The installer script will install git and ansible which are both required for installation and updating of software on the pi.
 
-### Requirements
 
 I prefer to install on Raspberry Pi 4's with 4 GB of RAM.  If you are using a different model of Pi or less RAM you will need to add a swap file in order to compile some of the software in this tool. I will leave that exercise to the end user but I may integrate a check and helper tool in the future if there is interest.  
 
