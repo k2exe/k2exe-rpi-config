@@ -1,8 +1,7 @@
 ---
 # file: playbook.yml
 - import_playbook: fldigi/main.yml
-  tags:
-  - fldigi,nbems
+  tags: [ fldigi,nbems ]
 - import_playbook: flamp/main.yml
   tags: [ flampi, nbems ]
 - import_playbook: flmsg/main.yml
