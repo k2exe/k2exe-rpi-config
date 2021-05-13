@@ -17,13 +17,13 @@
 
     - name: latest wsjtx version online
       shell: |
-        curl -s http://physics.princeton.edu/pulsar/K1JT/wsjtx.html | 
+        curl -s https://physics.princeton.edu/pulsar/K1JT/wsjtx.html | 
         grep "<li>Version" | grep -o [0-9].[0-9].[0-9] | head -n 1
       register: wsjtx_online
       args:
         warn: no
       changed_when: false
-    - set_fact: wsjtx_url="http://physics.princeton.edu/pulsar/K1JT/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
+    - set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/K1JT/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - debug: msg="{{ wsjtx_url }}"
 
     - set_fact: 
