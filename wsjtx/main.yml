@@ -7,7 +7,7 @@
     - name: check wsjtx installed 
       shell: |
         if hash wsjtx 2>/dev/null; then
-            echo "Installed-v. unknown"
+            wsjtx_app_version -v | cut -f 2 -d' '
         else echo "NOT INSTALLED"
         fi
       register: wsjtx_installed
