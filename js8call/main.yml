@@ -45,7 +45,7 @@
         pkg: 
         - libqt5multimedia5
         - libqt5multimedia5-plugins
-        - libqt5multimediaidgets5
+        - libqt5multimediawidgets5
         - libqt5serialport5
       when: js8call_install
 
