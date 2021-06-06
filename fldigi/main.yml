@@ -55,6 +55,7 @@
         - libpulse-dev
         - libportaudiocpp0
         - libsndfile1-dev
+        - pavucontrol
       when: fldigi_install
 
     - name: download fldigi and extract
