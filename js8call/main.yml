@@ -7,7 +7,7 @@
     - name: get installed js8call version
       shell: |
         if hash js8call 2>/dev/null; then
-            echo "Installed-v. unknown"
+            apt-cache policy js8call | awk  'FNR == 2 {print $2}'
         else echo "NOT INSTALLED"
         fi
       register: js8call_version
@@ -36,7 +36,7 @@
 
     - name: install js8call if not installed
       set_fact: 
-        js8call_install: "{{ 'true' if ( js8call == 'NOT INSTALLED' ) else 'false' }}"
+        js8call_install: "{{ 'true' if ( js8call != js8call_online ) else 'false' }}"
     - debug: msg="{{ js8call_install }}"
 
     - name: install js8call dependencies
