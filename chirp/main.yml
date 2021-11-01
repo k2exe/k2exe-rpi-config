@@ -42,20 +42,20 @@
     - name: download chirp and extract
       unarchive: 
         src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{newchirp}}.tar.gz
-        dest: /home/pi/
+        dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/chirp-daily-{{newchirp}}
+        creates: /home/pi/Downloads/chirp-daily-{{newchirp}}
       when: chirp_install
 
     - name: install chirp
       become: yes
       shell: python setup.py install --record install.txt
       args:
-        chdir: /home/pi/chirp-daily-{{newchirp}}
+        chdir: /home/pi/Downloads/chirp-daily-{{newchirp}}
       when: chirp_install
     - name: install python future support
       become: yes
       shell: pip install future
       args:
-        chdir: /home/pi/chirp-daily-{{newchirp}}
+        chdir: /home/pi/Downloads/chirp-daily-{{newchirp}}
       when: chirp_install

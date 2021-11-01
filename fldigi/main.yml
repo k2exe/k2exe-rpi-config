@@ -62,26 +62,26 @@
     - name: download fldigi and extract
       unarchive:
         src: https://sourceforge.net/projects/fldigi/files/fldigi/fldigi-{{ newfldigi }}.tar.gz
-        dest: /home/pi/
+        dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/fldigi-{{newfldigi}}
+        creates: /home/pi/Downloads/fldigi-{{newfldigi}}
       when: fldigi_install
 
     - name: ./configure fldigi
-      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
       with_items:
       - ./configure
       when: fldigi_install
 
     - name: make fldigi 
-      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
       with_items:
       - make
       when: fldigi_install
 
     - name: install fldigi
       become: yes
-      command: '{{ item }} chdir=/home/pi/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
       with_items:
       - make install
       when: fldigi_install

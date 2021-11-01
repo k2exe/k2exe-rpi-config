@@ -19,27 +19,27 @@
     - name: download and extract archive
       unarchive:
         src: https://www.langelaar.net/projects/jnos2/downloads/linux/releases/jnos2.0m.current.tar.gz
-        dest: /home/nosuser/
+        dest: /home/nosuser/Downloads/
         remote_src: yes
-        creates: /home/nosuser/jnos2.0m.current/
+        creates: /home/nosuser/Downloads/jnos2.0m.current/
     - name: ./configure jnos
       command:
         cmd: ./configure
-        chdir: /home/pi/jnos2.0m.current/rsync
-        creates: /home/pi/jnos2.0m.current/rsync/configure.okay
+        chdir: /home/pi/Downloads/jnos2.0m.current/rsync
+        creates: /home/pi/Downloads/jnos2.0m.current/rsync/configure.okay
     - name: make jnos
       command: 
         cmd: make
-        chdir: /home/pi/jnos2.0m.current/rsync
-        creates: /home/pi/jnos2.0m.current/rsync/jnosinstaller
+        chdir: /home/pi/Downloads/jnos2.0m.current/rsync
+        creates: /home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller
     - name: move installer
       copy: src={{ item.src }} dest={{ item.dest }} mode='0755'
       with_items:
-        - { src: '/home/pi/jnos2.0m.current/rsync/jnos', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
-        - { src: '/home/pi/jnos2.0m.current/rsync/jnosinstaller', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
+        - { src: '/home/pi/Downloads/jnos2.0m.current/rsync/jnos', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
+        - { src: '/home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
 ### Perform custom install
 #    - name: install jnos
 #      become: yes
 #      command:
-#        cmd: /home/pi/jnos2.0m.current/rsync/jnosinstaller
-#        chdir: /home/pi/jnos2.0m.current/rsync
+#        cmd: /home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller
+#        chdir: /home/pi/Downloads/jnos2.0m.current/rsync

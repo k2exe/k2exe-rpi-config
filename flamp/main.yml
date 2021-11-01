@@ -31,26 +31,26 @@
     - name: download flamp and extract
       unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flamp/flamp-{{ newflamp }}.tar.gz
-        dest: /home/pi/
+        dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/flamp-{{newflamp}}
+        creates: /home/pi/Downloads/flamp-{{newflamp}}
       when: flamp_install
 
     - name: ./configure flamp
-      command: '{{ item }} chdir=/home/pi/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
       with_items:
       - ./configure
       when: flamp_install
 
     - name: make flamp 
-      command: '{{ item }} chdir=/home/pi/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
       with_items:
       - make
       when: flamp_install
 
     - name: install flamp
       become: yes
-      command: '{{ item }} chdir=/home/pi/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
       with_items:
       - make install
       when: flamp_install
