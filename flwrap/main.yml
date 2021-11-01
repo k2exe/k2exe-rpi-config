@@ -31,26 +31,26 @@
     - name: download flwrap and extract
       unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flwrap/flwrap-{{ newflwrap }}.tar.gz
-        dest: /home/pi/
+        dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/flwrap-{{newflwrap}}
+        creates: /home/pi/Downloads/flwrap-{{newflwrap}}
       when: flwrap_install
 
     - name: ./configure flwrap
-      command: '{{ item }} chdir=/home/pi/flwrap-{{newflwrap}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flwrap-{{newflwrap}}'
       with_items:
       - ./configure
       when: flwrap_install
 
     - name: make flwrap 
-      command: '{{ item }} chdir=/home/pi/flwrap-{{newflwrap}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flwrap-{{newflwrap}}'
       with_items:
       - make
       when: flwrap_install
 
     - name: install flwrap
       become: yes
-      command: '{{ item }} chdir=/home/pi/flwrap-{{newflwrap}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flwrap-{{newflwrap}}'
       with_items:
       - make install
       when: flwrap_install

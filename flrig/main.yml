@@ -31,26 +31,26 @@
     - name: download flrig and extract
       unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flrig/flrig-{{ newflrig }}.tar.gz
-        dest: /home/pi/
+        dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/flrig-{{newflrig}}
+        creates: /home/pi/Downloads/flrig-{{newflrig}}
       when: flrig_install
 
     - name: ./configure flrig
-      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{newflrig}}'
       with_items:
       - ./configure
       when: flrig_install
 
     - name: make flrig 
-      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{newflrig}}'
       with_items:
       - make
       when: flrig_install
 
     - name: install flrig
       become: yes
-      command: '{{ item }} chdir=/home/pi/flrig-{{newflrig}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{newflrig}}'
       with_items:
       - make install
       when: flrig_install
