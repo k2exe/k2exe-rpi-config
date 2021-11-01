@@ -47,6 +47,8 @@
         - libqt5multimedia5-plugins
         - libqt5multimediawidgets5
         - libqt5serialport5
+        update_cache: yes
+        cache_valid_time: 3600
       when: js8call_install
 
     - name: download js8call deb file and install

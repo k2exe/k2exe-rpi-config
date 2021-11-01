@@ -41,6 +41,8 @@
         - libqt5sql5-sqlite
         - libfftw3-single3
         - libgfortran3
+        update_cache: yes
+        cache_valid_time: 3600
       when: wsjtx_install
 
     - name: download wsjtx deb file and install
