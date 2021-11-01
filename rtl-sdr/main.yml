@@ -24,7 +24,7 @@
     - name: clone rtl-sdr repo
       ansible.builtin.git:
         repo: 'git://git.osmocom.org/rtl-sdr.git'
-        dest: /home/pi/rtl-sdr
+        dest: /home/pi/Downloads/rtl-sdr
     - name: modprobe driver block
       become: yes
       blockinfile:
@@ -36,33 +36,33 @@
         create: yes
     - name: build folder
       ansible.builtin.file:
-        path: /home/pi/rtl-sdr/build
+        path: /home/pi/Downloads/rtl-sdr/build
         state: directory
     - name: cmake rtl-sdr 
-      command: '{{ item }} chdir=/home/pi/rtl-sdr/build'
+      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
       with_items:
       - cmake ../ -DINSTALL_UDEV_RULES=ON
       when: rtlsdr_install
     - name: make rtl-sdr 
-      command: '{{ item }} chdir=/home/pi/rtl-sdr/build'
+      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
       with_items:
       - make 
       when: rtlsdr_install
     - name: install rtl-sdr
       become: yes 
-      command: '{{ item }} chdir=/home/pi/rtl-sdr/build'
+      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
       with_items:
       - make install
       when: rtlsdr_install
     - name: ldconfig 
       become: yes
-      command: '{{ item }} chdir=/home/pi/rtl-sdr/build'
+      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
       with_items:
       - ldconfig
       when: rtlsdr_install
     - name: install rtl-sdr rules
       become: yes
-      command: '{{ item }} chdir=/home/pi/rtl-sdr/'
+      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/'
       with_items:
       - cp rtl-sdr.rules /etc/udev/rules.d/
       when: rtlsdr_install
