@@ -57,6 +57,8 @@
         - libsndfile1-dev
         - pavucontrol
         - extra-xdg-menus
+        update_cache: yes
+        cache_valid_time: 3600
       when: fldigi_install
 
     - name: download fldigi and extract
