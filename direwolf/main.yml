@@ -1,0 +1,53 @@
+---
+# file: direwolf/main.yml
+- name: direwolf
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: install or update to the latest version of direwolf
+      set_fact:
+        direwolf_install: "{{ 'true' }}"
+    - debug: msg="{{ direwolf_install }}"
+    - name:  install direwolf dependencies
+      become: yes
+      apt:
+        pkg:
+        - build-essential
+        - cmake
+        - g++
+        - gcc
+        - git
+        - libasound2-dev
+        - libudev-dev
+        - libusb-1.0-0-dev
+        - pandoc
+        - python-numpy
+        - python-pip
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: clone direwolf repo
+      ansible.builtin.git:
+        repo: 'https://www.github.com/wb2osz/direwolf'
+        dest: /home/pi/Downloads/direwolf
+        version: dev
+    - name: build folder
+      ansible.builtin.file:
+        path: /home/pi/Downloads/direwolf/build
+        state: directory
+    - name: cmake direwolf
+      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      with_items:
+      - cmake ..
+    - name: make direwolf
+      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      with_items:
+      - make -j4
+    - name: cmake direwolf
+      become: yes
+      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      with_items:
+      - make install
+    - name: make install-conf 
+      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      with_items:
+      - make install-conf
