@@ -43,7 +43,7 @@
       command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
       when: xastir_install
     - name: clone xastir repo
-      ansible.builtin.git:
+      git:
         repo: 'https://www.github.com/Xastir/Xastir.git'
         dest: /home/pi/Downloads/Xastir
     - name: bootstrap xastir
@@ -51,7 +51,7 @@
       with_items:
       - ./bootstrap.sh
     - name: build folder
-      ansible.builtin.file:
+      file:
         path: /home/pi/Downloads/Xastir/build
         state: directory
     - name: configure xastir
