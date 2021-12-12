@@ -1,0 +1,69 @@
+---
+# file: xastir/main.yml
+- name: xastir
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: install or update to the latest version of xastir
+      set_fact:
+        xastir_install: "{{ 'true' }}"
+    - debug: msg="{{ xastir_install }}"
+    - name:  install xastir dependencies
+      become: yes
+      apt:
+        pkg:
+        - autoconf
+        - automake
+        - build-essential
+        - festival
+        - festival-dev
+        - git
+        - gpsman
+        - gpsmanshp
+        - graphicsmagick
+        - gv
+        - libax25-dev 
+        - libcurl4-openssl-dev
+        - libdb5.3-dev
+        - libgeotiff-dev
+        - libgraphicsmagick1-dev
+        - libmotif-dev
+        - libpcre3-dev 
+        - libproj-dev
+        - libshp-dev
+        - libwebp-dev
+        - python-dev
+        - shapelib
+        - xfonts-100dpi
+        - xfonts-75dpi
+        - xorg-dev
+        update_cache: yes
+        cache_valid_time: 3600
+    - name: set fonts
+      command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
+      when: xastir_install
+    - name: clone xastir repo
+      git:
+        repo: 'https://www.github.com/Xastir/Xastir.git'
+        dest: /home/pi/Downloads/Xastir
+    - name: bootstrap xastir
+      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/'
+      with_items:
+      - ./bootstrap.sh
+    - name: build folder
+      file:
+        path: /home/pi/Downloads/Xastir/build
+        state: directory
+    - name: configure xastir
+      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+      with_items:
+      - ../configure CPPFLAGS="-I/usr/include/geotiff"
+    - name: make 
+      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+      with_items:
+      - make
+    - name: make install
+      become: yes
+      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+      with_items:
+      - make install

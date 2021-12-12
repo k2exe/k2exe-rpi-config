@@ -26,12 +26,12 @@
         update_cache: yes
         cache_valid_time: 3600
     - name: clone direwolf repo
-      ansible.builtin.git:
+      git:
         repo: 'https://www.github.com/wb2osz/direwolf'
         dest: /home/pi/Downloads/direwolf
         version: dev
     - name: build folder
-      ansible.builtin.file:
+      file:
         path: /home/pi/Downloads/direwolf/build
         state: directory
     - name: cmake direwolf
