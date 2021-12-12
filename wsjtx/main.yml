@@ -17,17 +17,17 @@
 
     - name: latest wsjtx version online
       shell: |
-        curl -s https://physics.princeton.edu/pulsar/K1JT/wsjtx.html | 
-        grep "<li>Version" | grep -o [0-9].[0-9].[0-9] | head -n 1
+        curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html | 
+        grep "armhf" | grep -o [0-9].[0-9].[0-9] | head -n 1
       register: wsjtx_online
       args:
         warn: no
       changed_when: false
-    - set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/K1JT/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
+    - set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - debug: msg="{{ wsjtx_url }}"
 
     - set_fact: 
-        wsjtx_install: "{{ 'true' if (wsjtx == 'NOT INSTALLED') else 'false' }}"
+        wsjtx_install: "{{ 'true' if (wsjtx != wsjtx_online) else 'false' }}"
     - debug: msg="{{ wsjtx_install }}"
 
     - name: install wsjtx dependencies
