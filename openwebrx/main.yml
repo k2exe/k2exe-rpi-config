@@ -1,10 +1,11 @@
 ---
 # file: openwebrx/main.yml
+- name: import docker
+  import_playbook: ../docker/main.yml
+
 - name: openwebrx
   hosts: localhost
   connection: localhost
-  - name: import docker
-    import_playbook: ../docker/main.yml
   tasks:
     - name: create docker volume
       community.docker.docker_volume:
