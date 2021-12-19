@@ -1,9 +1,7 @@
 ---
 # file: openwebrx/main.yml
-- name: import docker
-  import_playbook: ../docker/main.yml
-- name: import roles
-  import_playbool: import_roles.yml
+- import_playbook: ../docker/main.yml
+- import_playbook: install_roles.yml
 
 - name: openwebrx
   hosts: localhost

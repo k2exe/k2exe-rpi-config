@@ -5,13 +5,12 @@
   connection: localhost
   tasks:
     - name: download docker install script
-      shell: curl -fsSL https://get.docker.com -o get-docker.sh
-      args:
-        chdir: /home/pi/Downloads/
-        creates: get-docker.sh
+      get_url: 
+        url: https://get.docker.com
+        dest: /home/pi/Downloads/get-docker.sh
     - name: install docker
       become: yes
-      shell: sh /home/pi/Downloads/get-docker.sh
+      command: /home/pi/Downloads/get-docker.sh
       args:
         creates: /usr/bin/docker
         executable: /bin/sh

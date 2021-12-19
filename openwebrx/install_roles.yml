@@ -4,5 +4,5 @@
   hosts: localhost
   connection: localhost
   tasks:
-    name: install requirements.yml
-    shell: ansible-galaxy install -r requirements.yml
+    - name: install requirements.yml
+      shell: ansible-galaxy install -r requirements.yml
