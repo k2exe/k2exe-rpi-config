@@ -1,0 +1,28 @@
+---
+# file: docker/main.yml
+- name: docker
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: ensure downloads folder exists
+      file:
+        path: /home/pi/Downloads
+        state: directory
+        mode: '0755'
+    - name: download docker install script
+      get_url: 
+        url: https://get.docker.com
+        dest: /home/pi/Downloads/get-docker.sh
+        mode: '0755'
+    - name: install docker
+      become: yes
+      shell: /home/pi/Downloads/get-docker.sh
+      args:
+        creates: /usr/bin/docker
+        executable: /bin/sh
+    - name: add pi to docker group
+      become: yes
+      user:
+        name: pi
+        groups: docker
+        append: yes

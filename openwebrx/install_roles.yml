@@ -1,0 +1,8 @@
+---
+# file: openwebrx/install_roles.yml
+- name: install ansible galaxy roles
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: install requirements.yml
+      shell: ansible-galaxy install -r requirements.yml

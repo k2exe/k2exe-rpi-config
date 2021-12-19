@@ -1,0 +1,26 @@
+---
+# file: openwebrx/main.yml
+- import_playbook: ../docker/main.yml
+
+- name: openwebrx
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: create docker volume
+      community.docker.docker_volume:
+        name: openwebrx-settings
+    - name: create and configure openwebrx container
+      community.docker.docker_container:
+        name: openwebrx
+        image: jketterl/openwebrx:stable-armv7l
+        state: started
+        restart_policy: always
+        devices: 
+        # pass through USB for RTL-SDR dongles
+        - "/dev/bus/usb"
+        ports: 
+        # publish container port 8073 on host port 8073
+        - "8073:8073"
+        volumes:
+        # mount /var/lib/openwebrx
+        - "openwebrx-settings:/var/lib/openwebrx"
