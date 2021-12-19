@@ -4,6 +4,11 @@
   hosts: localhost
   connection: localhost
   tasks:
+    - name: ensure downloads folder exists
+      file:
+        path: /home/pi/Downloads
+        state: directory
+        mode: '0644'
     - name: download docker install script
       get_url: 
         url: https://get.docker.com
