@@ -8,7 +8,7 @@
       file:
         path: /home/pi/Downloads
         state: directory
-        mode: '0644'
+        mode: '0755'
     - name: download docker install script
       get_url: 
         url: https://get.docker.com
