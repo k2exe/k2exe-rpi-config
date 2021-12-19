@@ -15,7 +15,7 @@
         dest: /home/pi/Downloads/get-docker.sh
     - name: install docker
       become: yes
-      command: /home/pi/Downloads/get-docker.sh
+      shell: /home/pi/Downloads/get-docker.sh
       args:
         creates: /usr/bin/docker
         executable: /bin/sh
