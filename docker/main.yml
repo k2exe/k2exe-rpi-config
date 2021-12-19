@@ -24,5 +24,5 @@
       become: yes
       user:
         name: pi
-        group: docker
+        groups: docker
         append: yes

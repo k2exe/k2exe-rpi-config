@@ -1,7 +1,6 @@
 ---
 # file: openwebrx/main.yml
 - import_playbook: ../docker/main.yml
-- import_playbook: install_roles.yml
 
 - name: openwebrx
   hosts: localhost
@@ -15,7 +14,7 @@
         name: openwebrx
         image: jketterl/openwebrx:stable-armv7l
         state: started
-        restart: always
+        restart_policy: always
         devices: 
         # pass through USB for RTL-SDR dongles
         - "/dev/bus/usb"
