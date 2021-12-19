@@ -1,0 +1,4 @@
+---
+# file: openwebrx/requirements.yml
+collections:
+  -name: community.docker
