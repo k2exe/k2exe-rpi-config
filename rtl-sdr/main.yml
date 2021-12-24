@@ -7,8 +7,8 @@
     - name: install or update to the latest version of rtl-sdr
       set_fact:
         rtlsdr_install: "{{ 'true' }}"
-    - debug: msg="{{ rtlsdr_install }}"
-
+    - name: debug rtlsdr_install
+      debug: msg="{{ rtlsdr_install }}"
     - name:  install rtl-sdr dependencies
       become: yes
       apt:
@@ -25,6 +25,7 @@
       ansible.builtin.git:
         repo: 'git://git.osmocom.org/rtl-sdr.git'
         dest: /home/pi/Downloads/rtl-sdr
+        version: master
     - name: modprobe driver block
       become: yes
       blockinfile:
@@ -34,10 +35,12 @@
           blacklist rtl2832
           blacklist rtl2832
         create: yes
+        mode: '0644'
     - name: build folder
       ansible.builtin.file:
         path: /home/pi/Downloads/rtl-sdr/build
         state: directory
+        mode: '0755'
     - name: cmake rtl-sdr 
       command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
       with_items:

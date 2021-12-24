@@ -4,7 +4,7 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: check installed pat version
+    - name: check installed pat version # noqa risky-shell-pipe
       shell: |
         if hash pat 2>/dev/null; then
           pat version | awk -F 'v' '{print $2}' | head -c 5
@@ -12,9 +12,10 @@
         fi
       register: pat_version
       changed_when: false
-    - set_fact: pat="{{ pat_version.stdout }}"
+    - name: set installed pat version
+      set_fact: pat="{{ pat_version.stdout }}"
 
-    - name: check latest pat version
+    - name: check latest pat version # noqa risky-shell-pipe
       shell: |
         curl -s https://github.com/la5nta/pat/releases | grep -m 1 "amd64.deb" |
         awk -F '_' '{print $2}'
@@ -22,15 +23,17 @@
       args:
         warn: no
       changed_when: false
-    - set_fact: newpat="{{ pat_online.stdout }}"
+    - name: set latest pat version
+      set_fact: newpat="{{ pat_online.stdout }}"
 
     - name: install or update pat 
       set_fact:
         pat_install: "{{ 'true' if (pat != newpat) else 'false' }}"
-    - debug: msg="{{ pat_install }}"
+    - name: debug pat_install
+      debug: msg="{{ pat_install }}"
 
     - name: download pat deb file and install
       become: yes
       apt:
-        deb: https://github.com/la5nta/pat/releases/download/v{{newpat}}/pat_{{newpat}}_linux_armhf.deb
+        deb: https://github.com/la5nta/pat/releases/download/v{{ newpat }}/pat_{{ newpat }}_linux_armhf.deb
       when: pat_install

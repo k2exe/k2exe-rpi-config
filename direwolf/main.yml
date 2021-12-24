@@ -7,7 +7,8 @@
     - name: install or update to the latest version of direwolf
       set_fact:
         direwolf_install: "{{ 'true' }}"
-    - debug: msg="{{ direwolf_install }}"
+    - name: debug direwolf_install
+      debug: msg="{{ direwolf_install }}"
     - name:  install direwolf dependencies
       become: yes
       apt:
@@ -30,24 +31,30 @@
         repo: 'https://www.github.com/wb2osz/direwolf'
         dest: /home/pi/Downloads/direwolf
         version: dev
+        mode: '0755'
     - name: build folder
       file:
         path: /home/pi/Downloads/direwolf/build
         state: directory
+        mode: '0755'
     - name: cmake direwolf
       command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
       - cmake ..
+      when: direwolf_install
     - name: make direwolf
       command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
       - make -j4
-    - name: cmake direwolf
+      when: direwolf_install
+    - name: make install direwolf
       become: yes
       command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
       - make install
+      when: direwolf_install
     - name: make install-conf 
       command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
       - make install-conf
+      when: direwolf_install

@@ -4,13 +4,14 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: check installed hamlib version
+    - name: check installed hamlib version # noqa risky-shell-pipe
       shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | sed 's/rigctl(d),\ Hamlib\ //'; else echo "NOT INSTALLED"; fi 
       register: hamlib
       changed_when: false
-    - debug: msg="{{ hamlib.stdout }}"
+    - name: debug installed hamlib version
+      debug: msg="{{ hamlib.stdout }}"
   
-    - name: check latest hamlib version
+    - name: check latest hamlib version # noqa risky-shell-pipe
       shell: |
         curl -s https://sourceforge.net/projects/hamlib/files/latest/download | 
         grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] | 
@@ -20,7 +21,8 @@
         warn: no
       changed_when: false
 
-    - debug: msg="{{ newhamlib.stdout  }}"
+    - name: debug latest hamlib
+      debug: msg="{{ newhamlib.stdout  }}"
 
     - name: install hamlib dependencies
       become: yes
@@ -50,3 +52,11 @@
         - libsndfile1-dev
         update_cache: yes
         cache_valid_time: 3600
+        
+    - name: download hamlib and extract
+      unarchive:
+        src: https://sourceforge.net/projects/hamlib/files/hamlib/{{ newhamlib }}/hamlib-{{ newhamlib }}.tar.gz
+        dest: /home/pi/Downloads/
+        remote_src: yes
+        creates: /home/pi/Downloads/ham-{{ newhamlib }}
+      when: hamlib_install

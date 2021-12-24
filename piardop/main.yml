@@ -4,20 +4,23 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - set_fact: piardop="NOT INSTALLED" 
-    - name: latest piardop version check
+    - name: set piardop version
+      set_fact: piardop="NOT INSTALLED" 
+    - name: latest piardop version check # noqa risky-shell-pipe
       shell: |
         curl -s http://www.cantab.net/users/john.wiseman/Downloads/Beta/ | grep 'href="piardopc"' | grep -o 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
       register: piardop_online
       args:
         warn: no
       changed_when: false
-    - set_fact: newpiardop="{{ piardop_online.stdout }}" 
+    - name: set latest piardop version
+      set_fact: newpiardop="{{ piardop_online.stdout }}" 
 
     - name: create piardop folder
       file: 
         path: /home/pi/piardop
         state: directory
+        mode: '0755'
 
     - name: download piardop to /home/pi/piardop
       get_url: 
@@ -30,3 +33,4 @@
         src: .asoundrc
         dest: /home/pi/.asoundrc
         state: hard
+        mode: '0755'
