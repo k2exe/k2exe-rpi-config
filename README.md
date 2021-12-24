@@ -13,6 +13,7 @@ I created these to improve upon some of the other raspberry pi installer scripts
 - Pat(winlink)
 - Piardop
 - RTL-SDR
+- TQSL
 - WSJT-X
 - Xastir
 

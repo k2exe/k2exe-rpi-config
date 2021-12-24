@@ -34,6 +34,9 @@
 - import_playbook: rtl-sdr/main.yml
   tags:
   - rtl-sdr
+- import_playbook: tqsl/main.yml
+  tags:
+  - tqsl
 - import_playbook: wsjtx/main.yml
   tags:
   - wsjtx
