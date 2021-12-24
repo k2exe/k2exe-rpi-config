@@ -4,7 +4,7 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed flamp version
+    - name: get installed flamp version # noqa risky-shell-pipe
       shell: |
         if hash flamp 2>/dev/null; then
             flamp --version | awk 'FNR == 1 {print $2}'
@@ -13,44 +13,47 @@
         fi
       register: flamp_version 
       changed_when: false
-    - set_fact: flamp="{{ flamp_version.stdout }}"
+    - name: debug installed flamp version
+      set_fact: flamp="{{ flamp_version.stdout }}"
 
-    - name: check latest flamp version from sourceforge
+    - name: check latest flamp version from sourceforge # noqa risky-shell-pipe
       shell: curl -s https://sourceforge.net/projects/fldigi/files/flamp/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flamp_online
       args:
         warn: no
       changed_when: false
-    - set_fact: newflamp="{{  flamp_online.stdout  }}"
+    - name: set flamp latest version
+      set_fact: newflamp="{{  flamp_online.stdout  }}"
 
     - name: install or update to the latest version of flamp
       set_fact:
         flamp_install: "{{ 'true' if ( flamp != newflamp ) else 'false' }}"
-    - debug: msg="{{ flamp_install }}"
+    - name: debug flamp_install
+      debug: msg="{{ flamp_install }}"
 
     - name: download flamp and extract
       unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flamp/flamp-{{ newflamp }}.tar.gz
         dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/Downloads/flamp-{{newflamp}}
+        creates: /home/pi/Downloads/flamp-{{  newflamp  }}
       when: flamp_install
 
     - name: ./configure flamp
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
       with_items:
       - ./configure
       when: flamp_install
 
     - name: make flamp 
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
       with_items:
       - make
       when: flamp_install
 
     - name: install flamp
       become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{newflamp}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
       with_items:
       - make install
       when: flamp_install

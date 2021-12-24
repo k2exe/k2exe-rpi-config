@@ -14,7 +14,7 @@
         url: https://get.docker.com
         dest: /home/pi/Downloads/get-docker.sh
         mode: '0755'
-    - name: install docker
+    - name: install docker # noqa command-instead-of-shell (requires executeable)
       become: yes
       shell: /home/pi/Downloads/get-docker.sh
       args:

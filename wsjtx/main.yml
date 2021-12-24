@@ -4,7 +4,7 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: check wsjtx installed 
+    - name: check wsjtx installed # noqa risky-shell-pipe
       shell: |
         if hash wsjtx 2>/dev/null; then
             wsjtx_app_version -v | cut -f 2 -d' '
@@ -12,10 +12,12 @@
         fi
       register: wsjtx_installed
       changed_when: false
-    - set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
-    - debug: msg={{ wsjtx }}
+    - name: set installed wsjt-x version
+      set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
+    - name: debug wsjtx_installed
+      debug: msg={{ wsjtx }}
 
-    - name: latest wsjtx version online
+    - name: latest wsjt-x version online # noqa risky-shell-pipe
       shell: |
         curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html | 
         grep "armhf" | grep -o [0-9].[0-9].[0-9] | head -n 1
@@ -23,12 +25,16 @@
       args:
         warn: no
       changed_when: false
-    - set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
-    - debug: msg="{{ wsjtx_url }}"
+    - name: set latest wsjt-x version
+      set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
+    - name: debug wsjtx_url
+      debug: msg="{{ wsjtx_url }}"
 
-    - set_fact: 
+    - name: set install variable 
+      set_fact: 
         wsjtx_install: "{{ 'true' if (wsjtx != wsjtx_online) else 'false' }}"
-    - debug: msg="{{ wsjtx_install }}"
+    - name: debug wsjtx_install
+      debug: msg="{{ wsjtx_install }}"
 
     - name: install wsjtx dependencies
       become: yes

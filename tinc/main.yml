@@ -18,9 +18,11 @@
       file:
         path: /etc/tinc/k2exe/hosts
         state: directory
+        mode: '0755'
+
     - name: copy configs
       become: yes
-      copy: src={{ item.src }} dest={{ item.dest }}
+      copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
       with_items:
       - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' } 
 
@@ -31,7 +33,7 @@
         dest: /etc/tinc/k2exe/tinc.conf
         owner: root
         group: root
-        mode: "0644"
+        mode: '0644'
 
     - name: templated tinc-up
       become: yes
@@ -40,7 +42,7 @@
         dest: /etc/tinc/k2exe/tinc-up
         owner: root
         group: root
-        mode: "0755"
+        mode: '0755'
 
     - name: templated tinc-down
       become: yes
@@ -49,7 +51,7 @@
         dest: /etc/tinc/k2exe/tinc-down
         owner: root
         group: root
-        mode: "0755"
+        mode: '0755'
 
     - name: create private key for vpn
       become: yes

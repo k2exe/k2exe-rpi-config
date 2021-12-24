@@ -4,8 +4,8 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed fldigi version
-      shell: |
+    - name: get installed fldigi version # noqa risky-shell-pipe
+      shell: | 
         if hash fldigi 2>/dev/null; then 
             fldigi --version | awk 'FNR == 1 {print $2 }'
         else echo "NOT INSTALLED" 
@@ -13,21 +13,24 @@
       register: fldigi_version 
       changed_when: false
 
-    - set_fact: fldigi="{{ fldigi_version.stdout }}"
+    - name: debug installed fldigi version
+      set_fact: fldigi="{{ fldigi_version.stdout }}"
 
-    - name: check latest fldigi version from sourceforge
+    - name: check latest fldigi version from sourceforge # noqa risky-shell-pipe
       shell: curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
       register: fldigi_online
       args:
         warn: no
       changed_when: false
 
-    - set_fact: newfldigi="{{ fldigi_online.stdout }}"
+    - name: debug latest fldigi version
+      set_fact: newfldigi="{{ fldigi_online.stdout }}"
 
     - name: install or update to the latest version of fldigi
       set_fact:
         fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
-    - debug: msg="{{ fldigi_install }}"
+    - name: debug install status
+      debug: msg="{{ fldigi_install }}"
 
     - name: install fldigi dependencies
       become: yes
@@ -66,24 +69,24 @@
         src: https://sourceforge.net/projects/fldigi/files/fldigi/fldigi-{{ newfldigi }}.tar.gz
         dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/Downloads/fldigi-{{newfldigi}}
+        creates: /home/pi/Downloads/fldigi-{{ newfldigi }}
       when: fldigi_install
 
     - name: ./configure fldigi
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
       with_items:
       - ./configure
       when: fldigi_install
 
     - name: make fldigi 
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
       with_items:
       - make
       when: fldigi_install
 
     - name: install fldigi
       become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{newfldigi}}'
+      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
       with_items:
       - make install
       when: fldigi_install

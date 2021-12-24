@@ -4,7 +4,7 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed chirp version
+    - name: get installed chirp version # noqa risky-shell-pipe
       shell: | 
         if hash chirpw 2>/dev/null; then
           grep CHIRP_VERSION /usr/local/lib/python2.7/dist-packages/chirp/__init__.py | awk -F 'daily-' '{print $2}' | head -c 8
@@ -13,23 +13,28 @@
       register: chirp_version
       changed_when: false
 
-    - set_fact: chirp="{{ chirp_version.stdout }}"
-    - debug: msg="{{ chirp }}"
+    - name: set installed chirp version
+      set_fact: chirp="{{ chirp_version.stdout }}"
+    - name: debug installed chirp version
+      debug: msg="{{ chirp }}"
 
-    - name: check latest chirp version online
+    - name: check latest chirp version online # noqa risky-shell-pipe
       shell: curl -s https://trac.chirp.danplanet.com/chirp_daily/LATEST/ |
         grep .tar.gz | awk -F 'chirp-daily-' '{print $2}' | head -c 8
       register: chirp_online
       args:
         warn: no
       changed_when: false
-    - set_fact: newchirp="{{ chirp_online.stdout }}"
-    - debug: msg="{{ newchirp }}"
+    - name: set latest chirp version
+      set_fact: newchirp="{{ chirp_online.stdout }}"
+    - name: debug latest chirp
+      debug: msg="{{ newchirp }}"
 
     - name: install or update to the latest version of chirp
       set_fact:
         chirp_install: "{{ 'true' if ( chirp != newchirp ) else 'false' }}"
-    - debug: msg="{{ chirp_install }}"
+    - name: debug chirp_install
+      debug: msg="{{ chirp_install }}"
 
     - name: install prerequisites
       become: yes
@@ -43,21 +48,21 @@
       when: chirp_install
     - name: download chirp and extract
       unarchive: 
-        src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{newchirp}}.tar.gz
+        src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{ newchirp }}.tar.gz
         dest: /home/pi/Downloads/
         remote_src: yes
-        creates: /home/pi/Downloads/chirp-daily-{{newchirp}}
+        creates: /home/pi/Downloads/chirp-daily-{{ newchirp }}
       when: chirp_install
 
     - name: install chirp
       become: yes
-      shell: python setup.py install --record install.txt
+      command: python setup.py install --record install.txt
       args:
-        chdir: /home/pi/Downloads/chirp-daily-{{newchirp}}
+        chdir: /home/pi/Downloads/chirp-daily-{{ newchirp }}
       when: chirp_install
     - name: install python future support
       become: yes
-      shell: pip install future
+      command: pip install future
       args:
-        chdir: /home/pi/Downloads/chirp-daily-{{newchirp}}
+        chdir: /home/pi/Downloads/chirp-daily-{{ newchirp }}
       when: chirp_install
