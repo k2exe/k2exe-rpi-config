@@ -22,7 +22,7 @@
       args:
         warn: no
       changed_when: false
-    - name: debug lastest fldigi version
+    - name: debug latest fldigi version
       set_fact: newflmsg="{{  flmsg_online.stdout  }}"
 
     - name: install or update to the latest version of flmsg

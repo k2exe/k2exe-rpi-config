@@ -15,7 +15,7 @@
     - name: set js8call installed version
       set_fact: js8call="{{ js8call_version.stdout }}"
 
-    - name: lastest js8call version check # noqa risky-shell-pipe
+    - name: latest js8call version check # noqa risky-shell-pipe
       shell: |
         curl -s http://files.js8call.com/latest.html | grep "<strong>" | 
         grep -o [0-9].[0-9]

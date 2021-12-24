@@ -1,18 +1,28 @@
 ## K2EXE RPI config
 
-I created these to improve uppon some of the other raspberry pi installer scripts for ham radio.  By using ansible we can create and describe desired states.  The following tools are installed in a base installation.
+I created these to improve upon some of the other raspberry pi installer scripts for ham radio.  By using ansible we can create and describe desired states.  The following tools are installed in a base installation.
 
-*Direwolf
-*Flamp
-*Flarq
-*Fldigi
-*Flmsg
-*Flrig
-*Flwrap
-*JS8call
-*Pat(winlink)
-*WSJT-X
-*Xastir
+-Direwolf
+-Flamp
+-Flarq
+-Fldigi
+-Flmsg
+-Flrig
+-Flwrap
+-JS8call
+-Pat(winlink)
+-Piardop
+-RTL-SDR
+-WSJT-X
+-Xastir
+
+The following have ansible playbooks but are not included in the default playbook.yml
+
+-Ampr-ripd
+-Docker
+-Openwebrx (docker container)
+-RTC-ds-1307 (real time clock module)
+-Tinc (Onondaga County AMPRnet config) 
 
 ## Install
 
@@ -54,4 +64,9 @@ If you want to install or update only 1 specific package you can use ansible tag
 
 ```bash
 ansible-playbook playbook.yml --tags fldigi
+```
+
+if you want to install an optional playbook run the following and select the appropriate folder
+```bash
+ansible-playbook rtc-ds-1307/main.yml
 ```
