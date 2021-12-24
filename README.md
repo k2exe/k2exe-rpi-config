@@ -2,27 +2,27 @@
 
 I created these to improve upon some of the other raspberry pi installer scripts for ham radio.  By using ansible we can create and describe desired states.  The following tools are installed in a base installation.
 
--Direwolf
--Flamp
--Flarq
--Fldigi
--Flmsg
--Flrig
--Flwrap
--JS8call
--Pat(winlink)
--Piardop
--RTL-SDR
--WSJT-X
--Xastir
+- Direwolf
+- Flamp
+- Flarq
+- Fldigi
+- Flmsg
+- Flrig
+- Flwrap
+- JS8call
+- Pat(winlink)
+- Piardop
+- RTL-SDR
+- WSJT-X
+- Xastir
 
 The following have ansible playbooks but are not included in the default playbook.yml
 
--Ampr-ripd
--Docker
--Openwebrx (docker container)
--RTC-ds-1307 (real time clock module)
--Tinc (Onondaga County AMPRnet config) 
+- Ampr-ripd
+- Docker
+- Openwebrx (docker container)
+- RTC-ds-1307 (real time clock module)
+- Tinc (Onondaga County AMPRnet config) 
 
 ## Install
 
