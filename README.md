@@ -66,7 +66,7 @@ If you want to install or update only 1 specific package you can use ansible tag
 ansible-playbook playbook.yml --tags fldigi
 ```
 
-if you want to install an optional playbook run the following and select the appropriate folder
+If you want to install an optional playbook run the following and select the appropriate folder.
 ```bash
 ansible-playbook rtc-ds-1307/main.yml
 ```
