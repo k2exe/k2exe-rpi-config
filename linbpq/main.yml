@@ -45,3 +45,16 @@
         src: https://www.cantab.net/users/john.wiseman/Downloads/LinBPQAPRS.zip
         dest: "{{ ansible_env.HOME }}/linbpq"
         remote_src: yes
+
+    - name: download bpqconfiggen
+      get_url:
+        url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQConfigGen
+        dest: "{{ ansible_env.HOME }}/linbpq/piBPQConfigGen"
+        mode: 0755
+
+    - name: install bpq-config desktop icon
+      become: yes
+      template:
+        src: bpq-config.desktop.j2
+        dest: /usr/share/applications/bpq-config.desktop
+        mode: "0644"
