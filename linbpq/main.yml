@@ -1,0 +1,47 @@
+---
+# file: linbpq/main.yml
+- name: linbpq
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: create linbpq directory
+      file:
+        path: "{{ ansible_env.HOME }}/linbpq"
+        state: directory
+        mode: 0755
+
+    - name: download pilinbpq as linbpq
+      get_url:
+        url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/pilinbpq
+        dest: "{{ ansible_env.HOME }}/linbpq/linbpq"
+        mode: 0755
+
+    - name: download piBPQAPRS as bpqaprs
+      get_url:
+        url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQAPRS
+        dest: "{{ ansible_env.HOME }}/linbpq/bpqaprs"
+        mode: 0755
+
+    - name: download configuration file
+      get_url:
+        url: https://www.cantab.net/users/john.wiseman/Downloads/SimpleRMSGateway_bpq32.cfg
+        dest: "{{ ansible_env.HOME }}/linbpq/bpq32.cfg"
+        mode: 0644
+
+    - name: create HTML directory
+      file:
+        path: "{{ ansible_env.HOME }}/linbpq/HTML"
+        state: directory
+        mode: 0755
+
+    - name: download and unzip HTML documentation
+      unarchive:
+        src: https://www.cantab.net/users/john.wiseman/Downloads/Beta/HTMLPages.zip
+        dest: "{{ ansible_env.HOME }}/linbpq/HTML"
+        remote_src: yes
+
+    - name: download and unzip APRS client
+      unarchive:
+        src: https://www.cantab.net/users/john.wiseman/Downloads/LinBPQAPRS.zip
+        dest: "{{ ansible_env.HOME }}/linbpq"
+        remote_src: yes
