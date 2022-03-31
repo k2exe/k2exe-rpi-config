@@ -1,5 +1,7 @@
 ---
 # file: fldigi/main.yml
+- import_playbook: ../hamlib/main.yml
+
 - name: fldigi
   hosts: localhost
   connection: localhost
@@ -40,8 +42,8 @@
         - build-essential
         - libusb-1.0-0-dev
         - libltdl-dev
+        - libudev-dev
         - libusb-1.0-0
-        - libhamlib-utils
         - libsamplerate0
         - libsamplerate0-dev
         - libsigx-2.0-dev
