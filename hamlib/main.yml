@@ -82,7 +82,7 @@
     - name: make hamlib 
       command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
-      - make -j4
+      - make -j{{ ansible_facts['processor_count'] }}
       when: hamlib_install
 
     - name: install hamlib
