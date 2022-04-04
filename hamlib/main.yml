@@ -82,12 +82,12 @@
     - name: make hamlib 
       command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
-      - make
+      - make -j4
       when: hamlib_install
 
     - name: install hamlib
       become: yes
-      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newhamlib }}'
+      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
       - make install
       when: hamlib_install
