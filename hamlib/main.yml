@@ -5,24 +5,37 @@
   connection: localhost
   tasks:
     - name: check installed hamlib version # noqa risky-shell-pipe
-      shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | sed 's/rigctl(d),\ Hamlib\ //'; else echo "NOT INSTALLED"; fi 
-      register: hamlib
+      shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | awk '{ print $3 }'; else echo "NOT INSTALLED"; fi 
+      register: hamlib_version
       changed_when: false
     - name: debug installed hamlib version
-      debug: msg="{{ hamlib.stdout }}"
+      set_fact: hamlib="{{ hamlib_version.stdout }}"
   
     - name: check latest hamlib version # noqa risky-shell-pipe
       shell: |
         curl -s https://sourceforge.net/projects/hamlib/files/latest/download | 
         grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] | 
         head -n 1 | awk -F "/" '{print $7}'
-      register: newhamlib
+      register: hamlib_online
       args:
         warn: no
       changed_when: false
 
     - name: debug latest hamlib
-      debug: msg="{{ newhamlib.stdout  }}"
+      set_fact: newhamlib="{{ hamlib_online.stdout  }}"
+
+    - name: install or update to the latest version of hamlib
+      set_fact:
+        hamlib_install: "{{ 'true' if ( hamlib != newhamlib ) else 'false' }}"
+    - name: debug install status
+      debug: msg="{{ hamlib_install }}"
+
+    - name: ensure hamlib not installed by apt
+      become: yes
+      apt:
+        pkg:
+        - libhamlib-utils
+        state: absent
 
     - name: install hamlib dependencies
       become: yes
@@ -33,7 +46,6 @@
         - libusb-1.0-0-dev
         - libltdl-dev
         - libusb-1.0-0
-        - libhamlib-utils
         - libsamplerate0
         - libsamplerate0-dev
         - libsigx-2.0-dev
@@ -55,8 +67,27 @@
         
     - name: download hamlib and extract
       unarchive:
-        src: https://sourceforge.net/projects/hamlib/files/hamlib/{{ newhamlib }}/hamlib-{{ newhamlib }}.tar.gz
-        dest: /home/pi/Downloads/
+        src: "https://sourceforge.net/projects/hamlib/files/hamlib/{{ newhamlib }}/hamlib-{{ newhamlib }}.tar.gz"
+        dest: "{{ ansible_env.HOME }}/Downloads/"
         remote_src: yes
-        creates: /home/pi/Downloads/ham-{{ newhamlib }}
+        creates: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
+      when: hamlib_install
+
+    - name: ./configure hamlib
+      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+      with_items:
+      - ./configure
+      when: hamlib_install
+
+    - name: make hamlib 
+      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+      with_items:
+      - make
+      when: hamlib_install
+
+    - name: install hamlib
+      become: yes
+      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newhamlib }}'
+      with_items:
+      - make install
       when: hamlib_install
