@@ -5,41 +5,41 @@
   connection: localhost
   tasks:
     - name: add nosuser
-      become: yes
-      user:
+      become: true
+      ansible.builtin.user:
         name: nosuser
         groups: sudo,adm
     - name: install jnos dependencies
-      become: yes
-      apt:
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - libssl-dev
-        - libncurses5-dev
-        - libncursesw5-dev
+          - libssl-dev
+          - libncurses5-dev
+          - libncursesw5-dev
     - name: download and extract archive
-      unarchive:
+      ansible.builtin.unarchive:
         src: https://www.langelaar.net/projects/jnos2/downloads/linux/releases/jnos2.0m.current.tar.gz
         dest: /home/nosuser/Downloads/
-        remote_src: yes
+        remote_src: true
         creates: /home/nosuser/Downloads/jnos2.0m.current/
     - name: ./configure jnos
-      command:
+      ansible.builtin.command:
         cmd: ./configure
-        chdir: /home/pi/Downloads/jnos2.0m.current/rsync
-        creates: /home/pi/Downloads/jnos2.0m.current/rsync/configure.okay
+        chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
+        creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/configure.okay"
     - name: make jnos
-      command: 
+      ansible.builtin.command:
         cmd: make
-        chdir: /home/pi/Downloads/jnos2.0m.current/rsync
-        creates: /home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller
+        chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
+        creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
     - name: move installer
-      copy: src={{ item.src }} dest={{ item.dest }} mode='0755'
+      ansible.builtin.copy: src={{ item.src }} dest={{ item.dest }} mode='0755'
       with_items:
-        - { src: '/home/pi/Downloads/jnos2.0m.current/rsync/jnos', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
-        - { src: '/home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller', dest: '/home/pi/jnos2.0m.current/rsync/installerv2.1' }
+        - { src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnos',dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1' }
+        - { src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller',dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1' }
 ### Perform custom install
 #    - name: install jnos
-#      become: yes
-#      command:
-#        cmd: /home/pi/Downloads/jnos2.0m.current/rsync/jnosinstaller
-#        chdir: /home/pi/Downloads/jnos2.0m.current/rsync
+#      become: true
+#      ansible.builtin.command:
+#        cmd: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
+#        chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
