@@ -5,72 +5,73 @@
   connection: localhost
   tasks:
     - name: install or update to the latest version of xastir
-      set_fact:
+      ansible.builtin.set_fact:
         xastir_install: "{{ 'true' }}"
     - name: debug xastir_install
-      debug: msg="{{ xastir_install }}"
-    - name:  install xastir dependencies
-      become: yes
-      apt:
+      ansible.builtin.debug: msg="{{ xastir_install }}"
+    - name: install xastir dependencies
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - autoconf
-        - automake
-        - build-essential
-        - festival
-        - festival-dev
-        - git
-        - gpsman
-        - gpsmanshp
-        - graphicsmagick
-        - gv
-        - libax25-dev 
-        - libcurl4-openssl-dev
-        - libdb5.3-dev
-        - libgeotiff-dev
-        - libgraphicsmagick1-dev
-        - libmotif-dev
-        - libpcre3-dev 
-        - libproj-dev
-        - libshp-dev
-        - libwebp-dev
-        - python-dev
-        - shapelib
-        - xfonts-100dpi
-        - xfonts-75dpi
-        - xorg-dev
-        update_cache: yes
+          - autoconf
+          - automake
+          - build-essential
+          - extra-xdg-menus
+          - festival
+          - festival-dev
+          - git
+          - gpsman
+          - gpsmanshp
+          - graphicsmagick
+          - gv
+          - libax25-dev
+          - libcurl4-openssl-dev
+          - libdb5.3-dev
+          - libgeotiff-dev
+          - libgraphicsmagick1-dev
+          - libmotif-dev
+          - libpcre3-dev
+          - libproj-dev
+          - libshp-dev
+          - libwebp-dev
+          - python-dev
+          - shapelib
+          - xfonts-100dpi
+          - xfonts-75dpi
+          - xorg-dev
+        update_cache: true
         cache_valid_time: 3600
     - name: set fonts
-      command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
+      ansible.builtin.command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
       when: xastir_install
     - name: clone xastir repo
-      git:
+      ansible.builtin.git:
         repo: 'https://www.github.com/Xastir/Xastir.git'
         dest: /home/pi/Downloads/Xastir
         version: master
     - name: bootstrap xastir
-      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/'
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/'
       with_items:
-      - ./bootstrap.sh
+       - ./bootstrap.sh
       when: xastir_install
     - name: build folder
-      file:
+      ansible.builtin.file:
         path: /home/pi/Downloads/Xastir/build
         state: directory
         mode: 0755
     - name: configure xastir
-      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-      - ../configure CPPFLAGS="-I/usr/include/geotiff"
+       - ../configure CPPFLAGS="-I/usr/include/geotiff"
       when: xastir_install
-    - name: make 
-      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+    - name: make
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-      - make
+       - make
       when: xastir_install
     - name: make install
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-      - make install
+       - make install
       when: xastir_install
