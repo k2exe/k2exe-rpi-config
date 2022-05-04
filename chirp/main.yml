@@ -50,12 +50,12 @@
       ansible.builtin.unarchive:
         src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{ newchirp }}.tar.gz
         dest: "{{ ansible_env.HOME }}/Downloads/"
-        remote_src: yes
+        remote_src: true
         creates: "{{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}"
       when: chirp_install
 
     - name: install chirp
-      become: yes
+      become: true
       ansible.builtin.command: python setup.py install --record install.txt
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}"
