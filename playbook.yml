@@ -7,15 +7,15 @@
   tags:
   - direwolf
 - import_playbook: fldigi/main.yml
-  tags: [ fldigi, nbems ]
+  tags: [fldigi, nbems]
 - import_playbook: flamp/main.yml
-  tags: [ flamp, nbems ]
+  tags: [flamp, nbems]
 - import_playbook: flmsg/main.yml
-  tags: [ flmsg, nbems ]
+  tags: [flmsg, nbems]
 - import_playbook: flrig/main.yml
-  tags: [ flrig, nbems ]
+  tags: [flrig, nbems]
 - import_playbook: flwrap/main.yml
-  tags: [ flwrap, nbems ]
+  tags: [flwrap, nbems]
 - import_playbook: hamlib/main.yml
   tags:
   - hamlib
