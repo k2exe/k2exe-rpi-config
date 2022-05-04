@@ -19,7 +19,8 @@
       ansible.builtin.set_fact: fldigi="{{ fldigi_version.stdout }}"
 
     - name: check latest fldigi version from sourceforge # noqa risky-shell-pipe
-      ansible.builtin.shell: curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
+      ansible.builtin.shell: |
+        curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
       register: fldigi_online
       args:
         warn: false
@@ -32,12 +33,12 @@
       ansible.builtin.set_fact:
         fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
     - name: debug install status
-      debug: msg="{{ fldigi_install }}"
+      ansible.builtin.debug: msg="{{ fldigi_install }}"
 
     - name: install fldigi dependencies
       become: true
       ansible.builtin.apt:
-        pkg: 
+        pkg:
           - cmake
           - build-essential
           - libusb-1.0-0-dev
