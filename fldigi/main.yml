@@ -7,95 +7,95 @@
   connection: localhost
   tasks:
     - name: get installed fldigi version # noqa risky-shell-pipe
-      shell: | 
-        if hash fldigi 2>/dev/null; then 
+      ansible.builtin.shell: |
+        if hash fldigi 2>/dev/null; then
             fldigi --version | awk 'FNR == 1 {print $2 }'
-        else echo "NOT INSTALLED" 
+        else echo "NOT INSTALLED"
         fi
-      register: fldigi_version 
+      register: fldigi_version
       changed_when: false
 
     - name: debug installed fldigi version
-      set_fact: fldigi="{{ fldigi_version.stdout }}"
+      ansible.builtin.set_fact: fldigi="{{ fldigi_version.stdout }}"
 
     - name: check latest fldigi version from sourceforge # noqa risky-shell-pipe
-      shell: curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
+      ansible.builtin.shell: curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
       register: fldigi_online
       args:
-        warn: no
+        warn: false
       changed_when: false
 
     - name: debug latest fldigi version
-      set_fact: newfldigi="{{ fldigi_online.stdout }}"
+      ansible.builtin.set_fact: newfldigi="{{ fldigi_online.stdout }}"
 
     - name: install or update to the latest version of fldigi
-      set_fact:
+      ansible.builtin.set_fact:
         fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
     - name: debug install status
       debug: msg="{{ fldigi_install }}"
 
     - name: install fldigi dependencies
-      become: yes
-      apt:
+      become: true
+      ansible.builtin.apt:
         pkg: 
-        - cmake
-        - build-essential
-        - libusb-1.0-0-dev
-        - libltdl-dev
-        - libudev-dev
-        - libusb-1.0-0
-        - libsamplerate0
-        - libsamplerate0-dev
-        - libsigx-2.0-dev
-        - libsigc++-2.0-dev
-        - libpopt-dev
-        - tcl8.6-dev
-        - libspeex-dev
-        - libasound2-dev
-        - alsa-utils
-        - libgcrypt20-dev
-        - libfltk1.3-dev
-        - libpng++-dev
-        - portaudio19-dev
-        - libpulse-dev
-        - libportaudiocpp0
-        - libsndfile1-dev
-        - pavucontrol
-        - extra-xdg-menus
-        update_cache: yes
+          - cmake
+          - build-essential
+          - libusb-1.0-0-dev
+          - libltdl-dev
+          - libudev-dev
+          - libusb-1.0-0
+          - libsamplerate0
+          - libsamplerate0-dev
+          - libsigx-2.0-dev
+          - libsigc++-2.0-dev
+          - libpopt-dev
+          - tcl8.6-dev
+          - libspeex-dev
+          - libasound2-dev
+          - alsa-utils
+          - libgcrypt20-dev
+          - libfltk1.3-dev
+          - libpng++-dev
+          - portaudio19-dev
+          - libpulse-dev
+          - libportaudiocpp0
+          - libsndfile1-dev
+          - pavucontrol
+          - extra-xdg-menus
+        update_cache: true
         cache_valid_time: 3600
       when: fldigi_install
 
     - name: download fldigi and extract
-      unarchive:
+      ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/fldigi/fldigi-{{ newfldigi }}.tar.gz
-        dest: /home/pi/Downloads/
-        remote_src: yes
-        creates: /home/pi/Downloads/fldigi-{{ newfldigi }}
+        dest: "{{ ansible_env.HOME }}/Downloads/"
+        remote_src: true
+        creates: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
       when: fldigi_install
 
     - name: ./configure fldigi
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
       with_items:
-      - ./configure
+        - ./configure
       when: fldigi_install
 
-    - name: make fldigi 
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
+    - name: make fldigi
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
       with_items:
-      - make
+        - make
       when: fldigi_install
 
     - name: install fldigi
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/fldigi-{{ newfldigi }}'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
       with_items:
-      - make install
+        - make install
       when: fldigi_install
 
     - name: install fldigi desktop icon
-      copy:
+      ansible.builtin.copy:
         src: fldigi.desktop
-        dest: /home/pi/Desktop/fldigi.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/fldigi.desktop"
         mode: "0644"
       when: fldigi_install
