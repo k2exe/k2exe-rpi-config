@@ -1,4 +1,10 @@
 version: 2
+
+workflows:
+  test-env-vars:
+    jobs:
+      - build:
+          context: K2EXE-RPI-context
 jobs:
   build:
     docker:
