@@ -52,7 +52,7 @@
     - name: bootstrap xastir
       ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/'
       with_items:
-       - ./bootstrap.sh
+        - ./bootstrap.sh
       when: xastir_install
     - name: build folder
       ansible.builtin.file:
@@ -62,16 +62,16 @@
     - name: configure xastir
       ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-       - ../configure CPPFLAGS="-I/usr/include/geotiff"
+        - ../configure CPPFLAGS="-I/usr/include/geotiff"
       when: xastir_install
     - name: make
       ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-       - make
+        - make
       when: xastir_install
     - name: make install
       become: true
       ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-       - make install
+        - make install
       when: xastir_install
