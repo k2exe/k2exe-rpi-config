@@ -35,7 +35,7 @@
         mode: '0755'
     - name: build folder
       ansible.builtin.file:
-        path: {{ ansible_env.HOME }}/Downloads/direwolf/build
+        path: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
         state: directory
         mode: '0755'
     - name: cmake direwolf
