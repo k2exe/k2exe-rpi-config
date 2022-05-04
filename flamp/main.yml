@@ -61,6 +61,6 @@
     - name: install flamp desktop icon
       ansible.builtin.copy:
         src: flamp.desktop
-        dest: {{ ansible_env.HOME }}/Desktop/flamp.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/flamp.desktop"
         mode: "0644"
       when: flamp_install
