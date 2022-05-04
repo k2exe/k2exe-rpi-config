@@ -17,7 +17,8 @@
       ansible.builtin.set_fact: flwrap="{{ flwrap_version.stdout }}"
 
     - name: check latest flwrap version from sourceforge # noqa risky-shell-pipe
-      ansible.builtin.shell: curl -s https://sourceforge.net/projects/fldigi/files/flwrap/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      ansible.builtin.shell: |
+        curl -s https://sourceforge.net/projects/fldigi/files/flwrap/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flwrap_online
       args:
         warn: false
