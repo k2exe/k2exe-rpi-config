@@ -15,6 +15,7 @@
         pkg:
           - build-essential
           - cmake
+          - extra-xdg-menus
           - g++
           - gcc
           - git
@@ -29,32 +30,32 @@
     - name: clone direwolf repo
       ansible.builtin.git:
         repo: 'https://www.github.com/wb2osz/direwolf'
-        dest: /home/pi/Downloads/direwolf
+        dest: "{{ ansible_env.HOME }}/Downloads/direwolf"
         version: dev
         mode: '0755'
     - name: build folder
       ansible.builtin.file:
-        path: /home/pi/Downloads/direwolf/build
+        path: {{ ansible_env.HOME }}/Downloads/direwolf/build
         state: directory
         mode: '0755'
     - name: cmake direwolf
-      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
       with_items:
         - cmake ..
       when: direwolf_install
     - name: make direwolf
-      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
       with_items:
         - make -j4
       when: direwolf_install
     - name: make install direwolf
       become: true
-      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
       with_items:
         - make install
       when: direwolf_install
     - name: make install-conf
-      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
       with_items:
         - make install-conf
       when: direwolf_install
