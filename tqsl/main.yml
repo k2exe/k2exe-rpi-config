@@ -50,7 +50,7 @@
       when: tqsl_install
 
     - name: cmake tqsl
-      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
         - cmake .
       when: tqsl_install
