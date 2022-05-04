@@ -36,7 +36,7 @@
         src: https://sourceforge.net/projects/fldigi/files/flwrap/flwrap-{{ newflwrap }}.tar.gz
         dest: "{{ ansible_env.HOME }}/Downloads/"
         remote_src: true
-        creates: {{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}
+        creates: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}"
       when: flwrap_install
 
     - name: ./configure flwrap
