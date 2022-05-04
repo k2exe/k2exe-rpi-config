@@ -1,7 +1,7 @@
 version: 2.1
 
 workflows:
-  test-env-vars:
+  ansible-lint-project:
     jobs:
       - build:
           context: K2EXE-RPI-context
