@@ -64,12 +64,12 @@
           - libsndfile1-dev
         update_cache: true
         cache_valid_time: 3600
-        
+
     - name: download hamlib and extract
       ansible.builtin.unarchive:
         src: "https://sourceforge.net/projects/hamlib/files/hamlib/{{ newhamlib }}/hamlib-{{ newhamlib }}.tar.gz"
         dest: "{{ ansible_env.HOME }}/Downloads/"
-        remote_src: yes
+        remote_src: true
         creates: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
       when: hamlib_install
 
@@ -87,7 +87,7 @@
 
     - name: install hamlib
       become: true
-      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
         - make install
       when: hamlib_install
