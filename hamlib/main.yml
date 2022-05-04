@@ -5,68 +5,68 @@
   connection: localhost
   tasks:
     - name: check installed hamlib version # noqa risky-shell-pipe
-      shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | awk '{ print $3 }'; else echo "NOT INSTALLED"; fi 
+      ansible.builtin.shell: if hash rigctl 2>/dev/null; then rigctl --version | grep Hamlib | awk '{ print $3 }'; else echo "NOT INSTALLED"; fi
       register: hamlib_version
       changed_when: false
     - name: debug installed hamlib version
-      set_fact: hamlib="{{ hamlib_version.stdout }}"
-  
+      ansible.builtin.set_fact: hamlib="{{ hamlib_version.stdout }}"
+
     - name: check latest hamlib version # noqa risky-shell-pipe
-      shell: |
-        curl -s https://sourceforge.net/projects/hamlib/files/latest/download | 
-        grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] | 
+      ansible.builtin.shell: |
+        curl -s https://sourceforge.net/projects/hamlib/files/latest/download |
+        grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] |
         head -n 1 | awk -F "/" '{print $7}'
       register: hamlib_online
       args:
-        warn: no
+        warn: false
       changed_when: false
 
     - name: debug latest hamlib
-      set_fact: newhamlib="{{ hamlib_online.stdout  }}"
+      ansible.builtin.set_fact: newhamlib="{{ hamlib_online.stdout  }}"
 
     - name: install or update to the latest version of hamlib
-      set_fact:
+      ansible.builtin.set_fact:
         hamlib_install: "{{ 'true' if ( hamlib != newhamlib ) else 'false' }}"
     - name: debug install status
-      debug: msg="{{ hamlib_install }}"
+      ansible.builtin.debug: msg="{{ hamlib_install }}"
 
     - name: ensure hamlib not installed by apt
-      become: yes
-      apt:
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - libhamlib-utils
+          - libhamlib-utils
         state: absent
 
     - name: install hamlib dependencies
-      become: yes
-      apt:
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - cmake
-        - build-essential
-        - libusb-1.0-0-dev
-        - libltdl-dev
-        - libusb-1.0-0
-        - libsamplerate0
-        - libsamplerate0-dev
-        - libsigx-2.0-dev
-        - libsigc++-2.0-dev
-        - libpopt-dev
-        - tcl8.6-dev
-        - libspeex-dev
-        - libasound2-dev
-        - alsa-utils
-        - libgcrypt20-dev
-        - libfltk1.3-dev
-        - libpng++-dev
-        - portaudio19-dev
-        - libpulse-dev
-        - libportaudiocpp0
-        - libsndfile1-dev
-        update_cache: yes
+          - cmake
+          - build-essential
+          - libusb-1.0-0-dev
+          - libltdl-dev
+          - libusb-1.0-0
+          - libsamplerate0
+          - libsamplerate0-dev
+          - libsigx-2.0-dev
+          - libsigc++-2.0-dev
+          - libpopt-dev
+          - tcl8.6-dev
+          - libspeex-dev
+          - libasound2-dev
+          - alsa-utils
+          - libgcrypt20-dev
+          - libfltk1.3-dev
+          - libpng++-dev
+          - portaudio19-dev
+          - libpulse-dev
+          - libportaudiocpp0
+          - libsndfile1-dev
+        update_cache: true
         cache_valid_time: 3600
         
     - name: download hamlib and extract
-      unarchive:
+      ansible.builtin.unarchive:
         src: "https://sourceforge.net/projects/hamlib/files/hamlib/{{ newhamlib }}/hamlib-{{ newhamlib }}.tar.gz"
         dest: "{{ ansible_env.HOME }}/Downloads/"
         remote_src: yes
@@ -74,20 +74,20 @@
       when: hamlib_install
 
     - name: ./configure hamlib
-      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
-      - ./configure
+        - ./configure
       when: hamlib_install
 
-    - name: make hamlib 
-      command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+    - name: make hamlib
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
-      - make -j{{ ansible_facts['processor_count'] }}
+        - make -j{{ ansible_facts['processor_count'] }}
       when: hamlib_install
 
     - name: install hamlib
-      become: yes
+      become: true
       command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
       with_items:
-      - make install
+        - make install
       when: hamlib_install
