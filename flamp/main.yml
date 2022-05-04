@@ -5,62 +5,62 @@
   connection: localhost
   tasks:
     - name: get installed flamp version # noqa risky-shell-pipe
-      shell: |
+      ansible.builtin.shell: |
         if hash flamp 2>/dev/null; then
             flamp --version | awk 'FNR == 1 {print $2}'
         else
             echo "NOT INSTALLED"
         fi
-      register: flamp_version 
+      register: flamp_version
       changed_when: false
     - name: debug installed flamp version
-      set_fact: flamp="{{ flamp_version.stdout }}"
+      ansible.builtin.set_fact: flamp="{{ flamp_version.stdout }}"
 
     - name: check latest flamp version from sourceforge # noqa risky-shell-pipe
-      shell: curl -s https://sourceforge.net/projects/fldigi/files/flamp/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      ansible.builtin.shell: curl -s https://sourceforge.net/projects/fldigi/files/flamp/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flamp_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set flamp latest version
-      set_fact: newflamp="{{  flamp_online.stdout  }}"
+      ansible.builtin.set_fact: newflamp="{{  flamp_online.stdout  }}"
 
     - name: install or update to the latest version of flamp
-      set_fact:
+      ansible.builtin.set_fact:
         flamp_install: "{{ 'true' if ( flamp != newflamp ) else 'false' }}"
     - name: debug flamp_install
-      debug: msg="{{ flamp_install }}"
+      ansible.builtin.debug: msg="{{ flamp_install }}"
 
     - name: download flamp and extract
-      unarchive:
+      ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flamp/flamp-{{ newflamp }}.tar.gz
-        dest: /home/pi/Downloads/
-        remote_src: yes
-        creates: /home/pi/Downloads/flamp-{{  newflamp  }}
+        dest: "{{ ansible_env.HOME }}/Downloads/"
+        remote_src: true
+        creates: "{{ ansible_env.HOME }}/Downloads/flamp-{{  newflamp  }}"
       when: flamp_install
 
     - name: ./configure flamp
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}'
       with_items:
-      - ./configure
+        - ./configure
       when: flamp_install
 
-    - name: make flamp 
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
+    - name: make flamp
+      command: '{{ item }} chdir={{ ansible_env.HOME }}Downloads/flamp-{{ newflamp }}'
       with_items:
-      - make
+        - make
       when: flamp_install
 
     - name: install flamp
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/flamp-{{ newflamp }}'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}'
       with_items:
-      - make install
+        - make install
       when: flamp_install
 
     - name: install flamp desktop icon
-      copy:
+      ansible.builtin.copy:
         src: flamp.desktop
-        dest: /home/pi/Desktop/flamp.desktop
+        dest: {{ ansible_env.HOME }}/Desktop/flamp.desktop
         mode: "0644"
       when: flamp_install
