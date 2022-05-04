@@ -49,20 +49,20 @@
     - name: download chirp and extract
       ansible.builtin.unarchive:
         src: https://trac.chirp.danplanet.com/chirp_daily/LATEST/chirp-daily-{{ newchirp }}.tar.gz
-        dest: {{ ansible_env.HOME }}/Downloads/
+        dest: "{{ ansible_env.HOME }}/Downloads/"
         remote_src: yes
-        creates: {{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}
+        creates: "{{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}"
       when: chirp_install
 
     - name: install chirp
       become: yes
       ansible.builtin.command: python setup.py install --record install.txt
       args:
-        chdir: {{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}
+        chdir: "{{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}"
       when: chirp_install
     - name: install python future support
       become: true
       ansible.builtin.command: pip install future
       args:
-        chdir: {{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}
+        chdir: "{{ ansible_env.HOME }}/Downloads/chirp-daily-{{ newchirp }}"
       when: chirp_install
