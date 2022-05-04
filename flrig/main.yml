@@ -5,62 +5,63 @@
   connection: localhost
   tasks:
     - name: get installed flrig version # noqa risky-shell-pipe
-      shell: |
+      ansible.builtin.shell: |
         if hash flrig 2>/dev/null; then
             flrig --version | awk 'FNR == 1 {print $2}'
         else
             echo "NOT INSTALLED"
         fi
-      register: flrig_version 
+      register: flrig_version
       changed_when: false
-    - name : set fldigi installed version
-      set_fact: flrig="{{ flrig_version.stdout }}"
+    - name: set fldigi installed version
+      ansible.builtin.set_fact: flrig="{{ flrig_version.stdout }}"
 
     - name: check latest flrig version from sourceforge # noqa risky-shell-pipe
-      shell: curl -s https://sourceforge.net/projects/fldigi/files/flrig/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      ansible.builtin.shell: |
+        curl -s https://sourceforge.net/projects/fldigi/files/flrig/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flrig_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set latest flrig version
-      set_fact: newflrig="{{  flrig_online.stdout  }}"
+      ansible.builtin.set_fact: newflrig="{{  flrig_online.stdout  }}"
 
     - name: install or update to the latest version of flrig
-      set_fact:
+      ansible.builtin.set_fact:
         flrig_install: "{{ 'true' if ( flrig != newflrig ) else 'false' }}"
     - name: debug flrig_install
-      debug: msg="{{ flrig_install }}"
+      ansible.builtin.debug: msg="{{ flrig_install }}"
 
     - name: download flrig and extract
-      unarchive:
+      ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flrig/flrig-{{ newflrig }}.tar.gz
         dest: /home/pi/Downloads/
-        remote_src: yes
-        creates: /home/pi/Downloads/flrig-{{ newflrig }}
+        remote_src: true
+        creates: "{{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}"
       when: flrig_install
 
     - name: ./configure flrig
-      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{ newflrig }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}'
       with_items:
-      - ./configure
+        - ./configure
       when: flrig_install
 
-    - name: make flrig 
-      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{ newflrig }}'
+    - name: make flrig
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}'
       with_items:
-      - make
+        - make
       when: flrig_install
 
     - name: install flrig
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/flrig-{{ newflrig }}'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}'
       with_items:
-      - make install
+        - make install
       when: flrig_install
 
     - name: install flrig desktop icon
       copy:
         src: flrig.desktop
-        dest: /home/pi/Desktop/flrig.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/flrig.desktop"
         mode: "0644"
       when: flrig_install
