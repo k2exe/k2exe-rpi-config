@@ -60,7 +60,7 @@
       when: flrig_install
 
     - name: install flrig desktop icon
-      copy:
+      ansible.builtin.copy:
         src: flrig.desktop
         dest: "{{ ansible_env.HOME }}/Desktop/flrig.desktop"
         mode: "0644"
