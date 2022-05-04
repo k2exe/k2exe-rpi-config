@@ -28,7 +28,7 @@
     - name: set latest wsjt-x version
       ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - name: debug wsjtx_url
-      debug: msg="{{ wsjtx_url }}"
+      ansible.builtin.debug: msg="{{ wsjtx_url }}"
 
     - name: set install variable
       ansible.builtin.set_fact:
@@ -54,7 +54,7 @@
 
     - name: download wsjtx deb file and install
       become: true
-      apt:
+      ansible.builtin.apt:
         deb: "{{ wsjtx_url }}"
       when: wsjtx_install
 
