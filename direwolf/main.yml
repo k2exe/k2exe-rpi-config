@@ -5,56 +5,56 @@
   connection: localhost
   tasks:
     - name: install or update to the latest version of direwolf
-      set_fact:
+      ansible.builtin.set_fact:
         direwolf_install: "{{ 'true' }}"
     - name: debug direwolf_install
-      debug: msg="{{ direwolf_install }}"
-    - name:  install direwolf dependencies
-      become: yes
-      apt:
+      ansible.builtin.debug: msg="{{ direwolf_install }}"
+    - name: install direwolf dependencies
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - build-essential
-        - cmake
-        - g++
-        - gcc
-        - git
-        - libasound2-dev
-        - libudev-dev
-        - libusb-1.0-0-dev
-        - pandoc
-        - python-numpy
-        - python-pip
-        update_cache: yes
+          - build-essential
+          - cmake
+          - g++
+          - gcc
+          - git
+          - libasound2-dev
+          - libudev-dev
+          - libusb-1.0-0-dev
+          - pandoc
+          - python-numpy
+          - python-pip
+        update_cache: true
         cache_valid_time: 3600
     - name: clone direwolf repo
-      git:
+      ansible.builtin.git:
         repo: 'https://www.github.com/wb2osz/direwolf'
         dest: /home/pi/Downloads/direwolf
         version: dev
         mode: '0755'
     - name: build folder
-      file:
+      ansible.builtin.file:
         path: /home/pi/Downloads/direwolf/build
         state: directory
         mode: '0755'
     - name: cmake direwolf
-      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
-      - cmake ..
+        - cmake ..
       when: direwolf_install
     - name: make direwolf
-      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
-      - make -j4
+        - make -j4
       when: direwolf_install
     - name: make install direwolf
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
-      - make install
+        - make install
       when: direwolf_install
-    - name: make install-conf 
-      command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
+    - name: make install-conf
+      ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/direwolf/build'
       with_items:
-      - make install-conf
+        - make install-conf
       when: direwolf_install
