@@ -13,4 +13,4 @@ jobs:
       - checkout
       - run: pip install ansible ansible-lint
       - run: ansible-lint --version
-      - run: ansible-lint playbook.yml
+      - run: ansible-lint **/main.yml
