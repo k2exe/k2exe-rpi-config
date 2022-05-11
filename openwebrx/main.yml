@@ -15,12 +15,12 @@
         image: jketterl/openwebrx:stable-armv7l
         state: started
         restart_policy: always
-        devices: 
+        devices:
         # pass through USB for RTL-SDR dongles
-        - "/dev/bus/usb"
+          - "/dev/bus/usb"
         ports: 
         # publish container port 8073 on host port 8073
-        - "8073:8073"
+          - "8073:8073"
         volumes:
         # mount /var/lib/openwebrx
-        - "openwebrx-settings:/var/lib/openwebrx"
+          - "openwebrx-settings:/var/lib/openwebrx"
