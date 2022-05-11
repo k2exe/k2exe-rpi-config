@@ -1,6 +1,6 @@
 ---
 # file: rtc-ds1307/main.yml
-- name: configure real time clock module ds1307 
+- name: configure real time clock module ds1307
   hosts: localhost
   connection: localhost
   tasks:
