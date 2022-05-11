@@ -11,7 +11,7 @@
       become: true
       ansible.builtin.apt:
         name: tinc
-        update_cache: true 
+        update_cache: true
     - name: create k2exe tinc network folder
       become: true
       ansible.builtin.file:
