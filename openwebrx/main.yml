@@ -18,7 +18,7 @@
         devices:
         # pass through USB for RTL-SDR dongles
           - "/dev/bus/usb"
-        ports: 
+        ports:
         # publish container port 8073 on host port 8073
           - "8073:8073"
         volumes:
