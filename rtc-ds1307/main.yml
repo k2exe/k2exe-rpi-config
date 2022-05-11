@@ -5,24 +5,24 @@
   connection: localhost
   tasks:
   - name: configure i2c
-    become: yes
-    lineinfile:
+    become: true
+    ansible.builtin.lineinfile:
       path: /boot/config.txt
       regexp: "#dtparam=i2c_arm=on"
       line: dtparam=i2c_arm=on
   - name: configure ds1307
-    become: yes
-    lineinfile:
+    become: true
+    ansible.builtin.lineinfile:
       path: /boot/config.txt
       line: dtoverlay=i2c-rtc,ds1307
   - name: remove fake-hwclock
-    become: yes
-    apt:
+    become: true
+    ansible.builtin.apt:
       pkg: fake-hwclock
       state: absent
   - name: replace hwclock-set script
-    become: yes
-    copy:
+    become: true
+    ansible.builtin.copy:
       src: hwclock-set
       dest: /lib/udev/hwclock-set
       mode: "0755"
