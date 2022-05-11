@@ -3,7 +3,7 @@
 - name: K2EXE tinc vpn setup
   hosts: localhost
   connection: local
-  tasks: 
+  tasks:
     - name: import variables
       ansible.builtin.include_vars:
         file: vars/main.yml
