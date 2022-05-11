@@ -11,7 +11,7 @@
       become: true
       ansible.builtin.apt:
         name: tinc
-        update_cache: yes 
+        update_cache: true 
     - name: create k2exe tinc network folder
       become: true
       ansible.builtin.file:
@@ -23,7 +23,7 @@
       become: true
       ansible.builtin.copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
       with_items:
-        - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' } 
+        - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' }
 
     - name: templated tinc.conf
       become: true
