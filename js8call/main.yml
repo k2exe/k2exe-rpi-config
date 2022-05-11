@@ -1,11 +1,11 @@
 ---
-# file: js8call/main.yml 
-- name: js8call 
+# file: js8call/main.yml
+- name: js8call
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed js8call version # noqa risky-shell-pipe 
-      shell: |
+    - name: get installed js8call version # noqa risky-shell-pipe
+      ansible.builtin.shell: |
         if hash js8call 2>/dev/null; then
             apt-cache policy js8call | awk  'FNR == 2 {print $2}'
         else echo "NOT INSTALLED"
@@ -13,57 +13,58 @@
       register: js8call_version
       changed_when: false
     - name: set js8call installed version
-      set_fact: js8call="{{ js8call_version.stdout }}"
+      ansible.builtin.set_fact: js8call="{{ js8call_version.stdout }}"
 
     - name: latest js8call version check # noqa risky-shell-pipe
-      shell: |
-        curl -s http://files.js8call.com/latest.html | grep "<strong>" | 
+      ansible.builtin.shell: |
+        curl -s http://files.js8call.com/latest.html | grep "<strong>" |
         grep -o [0-9].[0-9]
       register: js8call_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set latest js8call version
-      set_fact: newjs8call="{{ js8call_online.stdout }}" 
+      ansible.builtin.set_fact: newjs8call="{{ js8call_online.stdout }}"
 
     - name: get js8call download link # noqa risky-shell-pipe
-      shell: |
-        curl -s http://files.js8call.com/latest.html | 
+      ansible.builtin.shell: |
+        curl -s http://files.js8call.com/latest.html |
         grep -o "http://files.js8call.com/[0-9].[0-9].[0-9]/js8call_[0-9].[0-9].[0-9]_armhf.deb" | head -n 1
       register: js8call_download
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set installed js8call version
-      set_fact: js8call_url="{{ js8call_download.stdout }}"
+      ansible.builtin.set_fact: js8call_url="{{ js8call_download.stdout }}"
 
     - name: install js8call if not installed
-      set_fact: 
+      ansible.builtin.set_fact:
         js8call_install: "{{ 'true' if ( js8call != js8call_online ) else 'false' }}"
     - name: debug js8call_install
-      debug: msg="{{ js8call_install }}"
+      ansible.builtin.debug: msg="{{ js8call_install }}"
 
     - name: install js8call dependencies
-      become: yes
-      apt:
-        pkg: 
-        - libqt5multimedia5
-        - libqt5multimedia5-plugins
-        - libqt5multimediawidgets5
-        - libqt5serialport5
-        update_cache: yes
+      become: true
+      ansible.builtin.apt:
+        pkg:
+          - extra-xdg-menus
+          - libqt5multimedia5
+          - libqt5multimedia5-plugins
+          - libqt5multimediawidgets5
+          - libqt5serialport5
+        update_cache: true
         cache_valid_time: 3600
       when: js8call_install
 
     - name: download js8call deb file and install
-      become: yes
-      apt: 
+      become: true
+      ansible.builtin.apt:
         deb: "{{ js8call_url }}"
       when: js8call_install
 
     - name: install js8call desktop icon
-      copy:
+      ansible.builtin.copy:
         src: js8call.desktop
-        dest: /home/pi/Desktop/js8call.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/js8call.desktop"
         mode: "0644"
       when: js8call_install

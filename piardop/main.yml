@@ -5,32 +5,32 @@
   connection: localhost
   tasks:
     - name: set piardop version
-      set_fact: piardop="NOT INSTALLED" 
+      ansible.builtin.set_fact: piardop="NOT INSTALLED"
     - name: latest piardop version check # noqa risky-shell-pipe
-      shell: |
+      ansible.builtin.shell: |
         curl -s http://www.cantab.net/users/john.wiseman/Downloads/Beta/ | grep 'href="piardopc"' | grep -o 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
       register: piardop_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set latest piardop version
-      set_fact: newpiardop="{{ piardop_online.stdout }}" 
+      ansible.builtin.set_fact: newpiardop="{{ piardop_online.stdout }}"
 
     - name: create piardop folder
-      file: 
-        path: /home/pi/piardop
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/piardop"
         state: directory
         mode: '0755'
 
-    - name: download piardop to /home/pi/piardop
-      get_url: 
+    - name: download piardop to ~/piardop
+      ansible.builtin.get_url:
         url: http://www.cantab.net/users/john.wiseman/Downloads/Beta/piardopc
-        dest: /home/pi/piardop/piardopc
+        dest: "{{ ansible_env.HOME }}/piardop/piardopc"
         mode: '0755'
 
     - name: .asoundrc config
-      file:
+      ansible.builtin.file:
         src: .asoundrc
-        dest: /home/pi/.asoundrc
+        dest: "{{ ansible_env.HOME }}/.asoundrc"
         state: hard
         mode: '0755'

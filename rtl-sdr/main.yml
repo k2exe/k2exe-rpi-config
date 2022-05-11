@@ -5,67 +5,67 @@
   connection: localhost
   tasks:
     - name: install or update to the latest version of rtl-sdr
-      set_fact:
+      ansible.builtin.set_fact:
         rtlsdr_install: "{{ 'true' }}"
     - name: debug rtlsdr_install
-      debug: msg="{{ rtlsdr_install }}"
-    - name:  install rtl-sdr dependencies
-      become: yes
-      apt:
+      ansible.builtin.debug: msg="{{ rtlsdr_install }}"
+    - name: install rtl-sdr dependencies
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - cmake
-        - build-essential
-        - python-pip
-        - libusb-1.0-0-dev
-        - python-numpy
-        - git
-        - pandoc
+          - cmake
+          - build-essential
+          - python-pip
+          - libusb-1.0-0-dev
+          - python-numpy
+          - git
+          - pandoc
       when: rtlsdr_install
     - name: clone rtl-sdr repo
       ansible.builtin.git:
         repo: 'git://git.osmocom.org/rtl-sdr.git'
-        dest: /home/pi/Downloads/rtl-sdr
+        dest: "{{ ansible_env.HOME }}/Downloads/rtl-sdr"
         version: master
     - name: modprobe driver block
-      become: yes
-      blockinfile:
+      become: true
+      ansible.builtin.blockinfile:
         path: /etc/modprobe.d/no-rtl.conf
         block: |
           blacklist dvb_usb_rtl28xxu
           blacklist rtl2832
           blacklist rtl2832
-        create: yes
+        create: true
         mode: '0644'
     - name: build folder
       ansible.builtin.file:
-        path: /home/pi/Downloads/rtl-sdr/build
+        path: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/build"
         state: directory
         mode: '0755'
-    - name: cmake rtl-sdr 
-      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
+    - name: cmake rtl-sdr
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-      - cmake ../ -DINSTALL_UDEV_RULES=ON
+        - cmake ../ -DINSTALL_UDEV_RULES=ON
       when: rtlsdr_install
-    - name: make rtl-sdr 
-      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
+    - name: make rtl-sdr
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-      - make 
+        - make
       when: rtlsdr_install
     - name: install rtl-sdr
-      become: yes 
-      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-      - make install
+        - make install
       when: rtlsdr_install
-    - name: ldconfig 
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/build'
+    - name: ldconfig
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-      - ldconfig
+        - ldconfig
       when: rtlsdr_install
     - name: install rtl-sdr rules
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/rtl-sdr/'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/'
       with_items:
-      - cp rtl-sdr.rules /etc/udev/rules.d/
+        - cp rtl-sdr.rules /etc/udev/rules.d/
       when: rtlsdr_install

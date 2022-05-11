@@ -5,65 +5,65 @@
   connection: localhost
   tasks:
     - name: get installed tqsl version # noqa risky-shell-pipe
-      shell: |
+      ansible.builtin.shell: |
         if hash tqsl 2>/dev/null; then
             tqsl --version 2>$1 | awk 'FNR == 1 {print $3}'
         else
             echo "NOT INSTALLED"
         fi
-      register: tqsl_version 
+      register: tqsl_version
       changed_when: false
     - name: debug installed tqsl version
-      set_fact: tqsl="{{ tqsl_version.stdout }}"
+      ansible.builtin.set_fact: tqsl="{{ tqsl_version.stdout }}"
     - name: check latest tsql version from arrl # noqa risky-shell-pipe
-      shell: curl -s http://www.arrl.org/tqsl-download | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
+      ansible.builtin.shell: curl -s http://www.arrl.org/tqsl-download | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: tqsl_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set latest tqsl version
-      set_fact: newtqsl="{{ tqsl_online.stdout }}"
+      ansible.builtin.set_fact: newtqsl="{{ tqsl_online.stdout }}"
 
-    - name: set 
-      set_fact:
+    - name: set_tqsl install
+      ansible.builtin.set_fact:
         tqsl_install: "{{ 'true' if ( tqsl != newtqsl ) else 'false' }}"
     - name: debug tqsl_install
-      debug: msg="{{ tqsl_install }}"
+      ansible.builtin.debug: msg="{{ tqsl_install }}"
 
     - name: install tqsl dependencies
-      become: yes
-      apt:
+      become: true
+      ansible.builtin.apt:
         pkg:
-        - libdb-dev
-        - libwxgtk3.0-dev
-        - libcurl4-openssl-dev
-        update_cache: yes
+          - libdb-dev
+          - libwxgtk3.0-dev
+          - libcurl4-openssl-dev
+        update_cache: true
         cache_valid_time: 3600
       when: tqsl_install
 
     - name: download tqsl and extract
-      unarchive:
+      ansible.builtin.unarchive:
         src: http://www.arrl.org/tqsl/tqsl-{{ newtqsl }}.tar.gz
-        dest: /home/pi/Downloads/
-        remote_src: yes
-        creates: /home/pi/Downloads/tqsl-{{ newtqsl }}
+        dest: "{{ ansible_env.HOME }}/Downloads/"
+        remote_src: true
+        creates: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}"
       when: tqsl_install
 
-    - name: cmake tqsl 
-      command: '{{ item }} chdir=/home/pi/Downloads/tqsl-{{ newtqsl }}'
+    - name: cmake tqsl
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
-      - cmake .
+        - cmake .
       when: tqsl_install
 
-    - name: make tqsl 
-      command: '{{ item }} chdir=/home/pi/Downloads/tqsl-{{ newtqsl }}'
+    - name: make tqsl
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
-      - make
+        - make
       when: tqsl_install
 
     - name: install tqsl
-      become: yes
-      command: '{{ item }} chdir=/home/pi/Downloads/tqsl-{{ newtqsl }}'
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
-      - make install
+        - make install
       when: tqsl_install

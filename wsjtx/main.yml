@@ -1,11 +1,11 @@
 ---
 # file: wsjtx/main.yml
-- name: wsjtx 
+- name: wsjtx
   hosts: localhost
   connection: localhost
   tasks:
     - name: check wsjtx installed # noqa risky-shell-pipe
-      shell: |
+      ansible.builtin.shell: |
         if hash wsjtx 2>/dev/null; then
             wsjtx_app_version -v | cut -f 2 -d' '
         else echo "NOT INSTALLED"
@@ -13,53 +13,54 @@
       register: wsjtx_installed
       changed_when: false
     - name: set installed wsjt-x version
-      set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
+      ansible.builtin.set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
     - name: debug wsjtx_installed
-      debug: msg={{ wsjtx }}
+      ansible.builtin.debug: msg={{ wsjtx }}
 
     - name: latest wsjt-x version online # noqa risky-shell-pipe
-      shell: |
-        curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html | 
+      ansible.builtin.shell: |
+        curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html |
         grep "armhf" | grep -o [0-9].[0-9].[0-9] | head -n 1
       register: wsjtx_online
       args:
-        warn: no
+        warn: false
       changed_when: false
     - name: set latest wsjt-x version
-      set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
+      ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - name: debug wsjtx_url
-      debug: msg="{{ wsjtx_url }}"
+      ansible.builtin.debug: msg="{{ wsjtx_url }}"
 
-    - name: set install variable 
-      set_fact: 
+    - name: set install variable
+      ansible.builtin.set_fact:
         wsjtx_install: "{{ 'true' if (wsjtx != wsjtx_online) else 'false' }}"
     - name: debug wsjtx_install
-      debug: msg="{{ wsjtx_install }}"
+      ansible.builtin.debug: msg="{{ wsjtx_install }}"
 
     - name: install wsjtx dependencies
-      become: yes
-      apt:
-        pkg: 
-        - libqt5multimedia5
-        - libqt5multimedia5-plugins
-        - libqt5serialport5
-        - libqt5printsupport5
-        - libqt5sql5-sqlite
-        - libfftw3-single3
-        - libgfortran3
-        update_cache: yes
+      become: true
+      ansible.builtin.apt:
+        pkg:
+          - extra-xdg-menus
+          - libqt5multimedia5
+          - libqt5multimedia5-plugins
+          - libqt5serialport5
+          - libqt5printsupport5
+          - libqt5sql5-sqlite
+          - libfftw3-single3
+          - libgfortran3
+        update_cache: true
         cache_valid_time: 3600
       when: wsjtx_install
 
     - name: download wsjtx deb file and install
-      become: yes
-      apt: 
+      become: true
+      ansible.builtin.apt:
         deb: "{{ wsjtx_url }}"
       when: wsjtx_install
- 
+
     - name: install wsjtx desktop icon
-      copy:
+      ansible.builtin.copy:
         src: wsjtx.desktop
-        dest: /home/pi/Desktop/wsjtx.desktop
+        dest: "{{ ansible_env.HOME }}/Desktop/wsjtx.desktop"
         mode: "0644"
       when: wsjtx_install

@@ -1,4 +1,10 @@
-version: 2
+version: 2.1
+
+workflows:
+  ansible-lint-project:
+    jobs:
+      - build:
+          context: K2EXE-RPI-context
 jobs:
   build:
     docker:
@@ -7,4 +13,5 @@ jobs:
       - checkout
       - run: pip install ansible ansible-lint
       - run: ansible-lint --version
+      - run: ansible-lint **/main.yml
       - run: ansible-lint playbook.yml
