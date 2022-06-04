@@ -47,7 +47,7 @@
       when: flamp_install
 
     - name: make flamp
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}Downloads/flamp-{{ newflamp }}'
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}'
       with_items:
         - make
       when: flamp_install
