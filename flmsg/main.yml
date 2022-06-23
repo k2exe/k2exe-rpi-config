@@ -53,7 +53,7 @@
       when: flmsg_install
 
     - name: install flmsg
-      become: false
+      become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
       with_items:
         - make install
