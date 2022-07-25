@@ -34,7 +34,7 @@
           - libproj-dev
           - libshp-dev
           - libwebp-dev
-          - python-dev
+          - python3-dev
           - shapelib
           - xfonts-100dpi
           - xfonts-75dpi
