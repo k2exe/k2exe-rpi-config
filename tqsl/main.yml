@@ -35,6 +35,7 @@
       ansible.builtin.apt:
         pkg:
           - libdb-dev
+          - liblmdb-dev
           - libwxgtk3.0-dev
           - libcurl4-openssl-dev
         update_cache: true
@@ -52,13 +53,13 @@
     - name: cmake tqsl
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
-        - cmake .
+        - cmake -j{{ ansible_facts['processor_count'] }} .
       when: tqsl_install
 
     - name: make tqsl
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: tqsl_install
 
     - name: install tqsl

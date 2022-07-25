@@ -46,7 +46,7 @@
     - name: make direwolf
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
       with_items:
-        - make -j4
+        - make -j{{ ansible_facts['processor_count'] }}
       when: direwolf_install
     - name: make install direwolf
       become: true

@@ -44,12 +44,12 @@
     - name: cmake rtl-sdr
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-        - cmake ../ -DINSTALL_UDEV_RULES=ON
+        - cmake -j{{ ansible_facts['processor_count'] }}  ../ -DINSTALL_UDEV_RULES=ON
       when: rtlsdr_install
     - name: make rtl-sdr
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: rtlsdr_install
     - name: install rtl-sdr
       become: true

@@ -29,7 +29,7 @@
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/configure.okay"
     - name: make jnos
       ansible.builtin.command:
-        cmd: make
+        cmd: make -j{{ ansible_facts['processor_count'] }}
         chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
     - name: move installer

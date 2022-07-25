@@ -49,7 +49,7 @@
     - name: make flwrap
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: flwrap_install
 
     - name: install flwrap

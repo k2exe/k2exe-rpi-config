@@ -49,7 +49,7 @@
     - name: make flmsg
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: flmsg_install
 
     - name: install flmsg
