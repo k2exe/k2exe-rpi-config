@@ -15,9 +15,9 @@
         pkg:
           - cmake
           - build-essential
-          - python-pip
+          - python3-pip
           - libusb-1.0-0-dev
-          - python-numpy
+          - python3-numpy
           - git
           - pandoc
       when: rtlsdr_install
