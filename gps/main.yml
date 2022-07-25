@@ -13,7 +13,7 @@
         - chrony
         - python3-gi-cairo
         - libgps-dev
-  - name: register USB GPS device by ID 
+  - name: register USB GPS device by ID
     ansible.builtin.command: set -o pipefail && ls /dev/serial/by-id/ | grep GPS | head -1 || echo "/dev/ttyACM0"
     register: gps_device
     changed_when: false
