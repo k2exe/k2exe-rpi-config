@@ -49,7 +49,7 @@
     - name: make flrig
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: flrig_install
 
     - name: install flrig

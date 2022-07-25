@@ -49,7 +49,7 @@
     - name: make flamp
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: flamp_install
 
     - name: install flamp

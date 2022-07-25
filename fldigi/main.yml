@@ -84,7 +84,7 @@
     - name: make fldigi
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: fldigi_install
 
     - name: install fldigi

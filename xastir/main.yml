@@ -67,7 +67,7 @@
     - name: make
       ansible.builtin.command: '{{ item }} chdir=/home/pi/Downloads/Xastir/build'
       with_items:
-        - make
+        - make -j{{ ansible_facts['processor_count'] }}
       when: xastir_install
     - name: make install
       become: true
