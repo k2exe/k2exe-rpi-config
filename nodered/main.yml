@@ -15,7 +15,6 @@
         dest: "{{ ansible_env.HOME }}/Downloads/update-nodejs-and-nodered"
         mode: '0755'
     - name: install nodered # noqa command-instead-of-shell (requires executable)
-      become: true
       ansible.builtin.shell: "{{ ansible_env.HOME }}/Downloads/update-nodejs-and-nodered --confirm-install --confirm-pi --restart"
       args:
         creates: /usr/bin/node-red
