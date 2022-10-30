@@ -1,0 +1,25 @@
+---
+# file: nodered/main.yml
+- name: nodered
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: ensure downloads folder exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Downloads"
+        state: directory
+        mode: '0755'
+    - name: download nodered install script
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered
+        dest: "{{ ansible_env.HOME }}/Downloads/update-nodejs-and-nodered"
+        mode: '0755'
+    - name: install nodered # noqa command-instead-of-shell (requires executable)
+      become: true
+      ansible.builtin.shell: "{{ ansible_env.HOME }}/Downloads/update-nodejs-and-nodered --confirm-install --confirm-pi --restart"
+      args:
+        creates: /usr/bin/node-red
+        executable: /bin/sh
+      register: install-feedback
+    - name: display install feedback
+      ansible.builtin.debug: msg="{{ install-feedback }}"
