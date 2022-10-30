@@ -1,0 +1,11 @@
+---
+# file: tasks/main.yml
+- name: K2EXE node setup
+  hosts: localhost
+  connection: local
+  tasks: 
+    name: create local config folder
+    ansible.builtin.file:
+      path: "{{ ansible_env.HOME }}/.k2exe"
+      state: directory
+      mode: '0755'

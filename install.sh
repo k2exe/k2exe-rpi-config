@@ -3,7 +3,7 @@
 set -e;
 
 sudo apt-get update
-sudo apt-get -y install git python3-pip
+sudo apt-get -y install git jq python3-pip
 sudo python3 -m pip install ansible
 
 cd "$HOME"
