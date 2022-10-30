@@ -20,6 +20,6 @@
       args:
         creates: /usr/bin/node-red
         executable: /bin/sh
-      register: install-feedback
+      register: install_feedback
     - name: display install feedback
-      ansible.builtin.debug: msg="{{ install-feedback }}"
+      ansible.builtin.debug: msg="{{ install_feedback }}"
