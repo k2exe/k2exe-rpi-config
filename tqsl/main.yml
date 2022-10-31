@@ -36,7 +36,7 @@
         pkg:
           - libdb-dev
           - liblmdb-dev
-          - libwxgtk3.0-dev
+          - libwxgtk3.0-gtk3-dev
           - libcurl4-openssl-dev
         update_cache: true
         cache_valid_time: 3600
