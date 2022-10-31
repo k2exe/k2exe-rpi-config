@@ -1,8 +1,5 @@
 ---
 # file: playbook.yml
-- import_playbook: chirp/main.yml
-  tags:
-  - chirp
 - import_playbook: direwolf/main.yml
   tags:
   - direwolf
