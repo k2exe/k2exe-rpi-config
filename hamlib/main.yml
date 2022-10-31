@@ -48,7 +48,6 @@
           - libusb-1.0-0
           - libsamplerate0
           - libsamplerate0-dev
-          - libsigx-2.0-dev
           - libsigc++-2.0-dev
           - libpopt-dev
           - tcl8.6-dev
