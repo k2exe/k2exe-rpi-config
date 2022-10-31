@@ -35,7 +35,7 @@
     - name: download flrig and extract
       ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flrig/flrig-{{ newflrig }}.tar.gz
-        dest: /home/pi/Downloads/
+        dest: "{{ ansible_env.HOME }}/Downloads/"
         remote_src: true
         creates: "{{ ansible_env.HOME }}/Downloads/flrig-{{ newflrig }}"
       when: flrig_install
