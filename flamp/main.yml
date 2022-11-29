@@ -20,8 +20,6 @@
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/flamp/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flamp_online
-      args:
-        warn: false
       changed_when: false
     - name: set flamp latest version
       ansible.builtin.set_fact: newflamp="{{  flamp_online.stdout  }}"
