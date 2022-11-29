@@ -29,8 +29,6 @@
         curl -s http://files.js8call.com/latest.html |
         grep -o "http://files.js8call.com/[0-9].[0-9].[0-9]/js8call_[0-9].[0-9].[0-9]_armhf.deb" | head -n 1
       register: js8call_download
-      args:
-        warn: false
       changed_when: false
     - name: set installed js8call version
       ansible.builtin.set_fact: js8call_url="{{ js8call_download.stdout }}"
