@@ -20,8 +20,6 @@
         curl -s http://files.js8call.com/latest.html | grep "<strong>" |
         grep -o [0-9].[0-9]
       register: js8call_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest js8call version
       ansible.builtin.set_fact: newjs8call="{{ js8call_online.stdout }}"
