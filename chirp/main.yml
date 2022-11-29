@@ -22,8 +22,6 @@
       ansible.builtin.shell: curl -s https://trac.chirp.danplanet.com/chirp_daily/LATEST/ |
         grep .tar.gz | awk -F 'chirp-daily-' '{print $2}' | head -c 8
       register: chirp_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest chirp version
       ansible.builtin.set_fact: newchirp="{{ chirp_online.stdout }}"
