@@ -13,5 +13,29 @@ jobs:
       - checkout
       - run: pip install ansible ansible-lint
       - run: ansible-lint --version
-      - run: ansible-lint **/main.yml
+      - run: ansible-lint ampr-ripd/main.yml
+      - run: ansible-lint chirp/main.yml
+      - run: ansible-lint direwolf/main.yml
+      - run: ansible-lint docker/main.yml
+      - run: ansible-lint flamp/main.yml
+      - run: ansible-lint fldigi/main.yml
+      - run: ansible-lint flmsg/main.yml
+      - run: ansible-lint flrig/main.yml
+      - run: ansible-lint flwrap/main.yml
+      - run: ansible-lint gps/main.yml
+      - run: ansible-lint hamlib/main.yml
+      - run: ansible-lint jnos/main.yml
+      - run: ansible-lint js8call/main.yml
+      - run: ansible-lint linbpq/main.yml
+      - run: ansible-lint nodered/main.yml
+      - run: ansible-lint openwebrx/main.yml
+      - run: ansible-lint pat/main.yml
+      - run: ansible-lint piardop/main.yml
+      - run: ansible-lint rtc-ds1307/main.yml
+      - run: ansible-lint rtl-sdr/main.yml
+      - run: ansible-lint tasks/main.yml
+      - run: ansible-lint tinc/main.yml
+      - run: ansible-lint tqsl/main.yml
+      - run: ansible-lint wsjtx/main.yml
+      - run: ansible-lint xastir/main.yml
       - run: ansible-lint playbook.yml
