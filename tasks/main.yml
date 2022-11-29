@@ -4,7 +4,7 @@
   hosts: localhost
   connection: local
   tasks: 
-    name: create local config folder
+    name: Create local config folder
     ansible.builtin.file:
       path: "{{ ansible_env.HOME }}/.k2exe"
       state: directory
