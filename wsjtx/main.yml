@@ -22,8 +22,6 @@
         curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html |
         grep "armhf" | grep -o [0-9].[0-9].[0-9] | head -n 1
       register: wsjtx_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest wsjt-x version
       ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
