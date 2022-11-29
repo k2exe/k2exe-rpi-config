@@ -20,8 +20,6 @@
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/flrig/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flrig_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest flrig version
       ansible.builtin.set_fact: newflrig="{{  flrig_online.stdout  }}"
