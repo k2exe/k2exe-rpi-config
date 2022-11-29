@@ -18,8 +18,6 @@
     - name: check latest tsql version from arrl # noqa risky-shell-pipe
       ansible.builtin.shell: curl -s http://www.arrl.org/tqsl-download | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: tqsl_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest tqsl version
       ansible.builtin.set_fact: newtqsl="{{ tqsl_online.stdout }}"
