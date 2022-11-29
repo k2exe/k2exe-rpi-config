@@ -1,6 +1,6 @@
 ---
 # file: flamp/main.yml
-- name: flamp
+- name: Flamp
   hosts: localhost
   connection: localhost
   tasks:
@@ -21,12 +21,12 @@
         curl -s https://sourceforge.net/projects/fldigi/files/flamp/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flamp_online
       changed_when: false
-    - name: set flamp latest version
+    - name: Set flamp latest version
       ansible.builtin.set_fact: newflamp="{{ flamp_online.stdout }}"
 
-    - name: Install or update to the latest version of flamp # noqa no-free-form 
+    - name: Install or update to the latest version of flamp
       ansible.builtin.set_fact:
-        flamp_install: "{{ 'true' if ( flamp != newflamp ) else 'false' }}"
+        flamp_install: "{{ 'true' if (flamp != newflamp) else 'false' }}"
     - name: Debug flamp_install
       ansible.builtin.debug: msg="{{ flamp_install }}"
 
