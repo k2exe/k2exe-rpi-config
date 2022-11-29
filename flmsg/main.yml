@@ -20,8 +20,6 @@
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/flmsg/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flmsg_online
-      args:
-        warn: false
       changed_when: false
     - name: debug latest fldigi version
       ansible.builtin.set_fact: newflmsg="{{  flmsg_online.stdout  }}"
