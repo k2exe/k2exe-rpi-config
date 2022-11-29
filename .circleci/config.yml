@@ -14,7 +14,6 @@ jobs:
       - run: pip install ansible ansible-lint
       - run: ansible-lint --version
       - run: ansible-lint ampr-ripd/main.yml
-      - run: ansible-lint chirp/main.yml
       - run: ansible-lint direwolf/main.yml
       - run: ansible-lint docker/main.yml
       - run: ansible-lint flamp/main.yml
