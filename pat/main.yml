@@ -20,8 +20,6 @@
         curl -s https://github.com/la5nta/pat/releases | grep -m 1 "amd64.deb" |
         awk -F '_' '{print $2}'
       register: pat_online
-      args:
-        warn: false
       changed_when: false
     - name: set latest pat version
       ansible.builtin.set_fact: newpat="{{ pat_online.stdout }}"
