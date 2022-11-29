@@ -36,6 +36,7 @@
           - liblmdb-dev
           - libwxgtk3.0-gtk3-dev
           - libcurl4-openssl-dev
+          - libssl-dev
         update_cache: true
         cache_valid_time: 3600
       when: tqsl_install
