@@ -50,7 +50,7 @@
         dest: "{{ ansible_env.HOME }}/Downloads/Xastir"
         version: master
     - name: bootstrap xastir
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/'
+      ansible.builtin.command: 'bash {{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/'
       with_items:
         - ./bootstrap.sh
       when: xastir_install
