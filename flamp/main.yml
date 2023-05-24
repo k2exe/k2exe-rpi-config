@@ -60,7 +60,7 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}"
         cmd: make install
-        creates: /usr/local/bin/flamp
+        changed_when: false
       when: flamp_install
 
     - name: Install flamp desktop icon
