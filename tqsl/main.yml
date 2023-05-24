@@ -14,19 +14,22 @@
       register: tqsl_version
       changed_when: false
     - name: Debug installed tqsl version
-      ansible.builtin.set_fact: tqsl="{{ tqsl_version.stdout }}"
+      ansible.builtin.set_fact:
+        tqsl: "{{ tqsl_version.stdout }}"
     - name: Check latest tsql version from arrl # noqa risky-shell-pipe
       ansible.builtin.shell: curl -s http://www.arrl.org/tqsl-download | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: tqsl_online
       changed_when: false
     - name: Set latest tqsl version
-      ansible.builtin.set_fact: newtqsl="{{ tqsl_online.stdout }}"
+      ansible.builtin.set_fact:
+        newtqsl: "{{ tqsl_online.stdout }}"
 
     - name: Set_tqsl install
       ansible.builtin.set_fact:
         tqsl_install: "{{ 'true' if ( tqsl != newtqsl ) else 'false' }}"
     - name: debug tqsl_install
-      ansible.builtin.debug: msg="{{ tqsl_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ tqsl_install }}"
 
     - name: Install tqsl dependencies
       become: true
@@ -50,9 +53,11 @@
       when: tqsl_install
 
     - name: Cmake tqsl
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
-      with_items:
-        - cmake -j{{ ansible_facts['processor_count'] }} .
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}"
+        cmd: cmake -j{{ ansible_facts['processor_count'] }} .
+        creates: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}/CmakeFiles/CMakeDirectoryInformation.cmake"
       when: tqsl_install
 
     - name: Make tqsl
