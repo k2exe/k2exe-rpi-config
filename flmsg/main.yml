@@ -59,9 +59,11 @@
 
     - name: Install flmsg
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      argv:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
+        cmd: make install
+        creates: /usr/bin/local/flmsg
       when: flmsg_install
 
     - name: Install flmsg desktop icon
