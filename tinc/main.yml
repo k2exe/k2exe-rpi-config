@@ -4,28 +4,28 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: import variables
+    - name: Import variables
       ansible.builtin.include_vars:
         file: vars/main.yml
-    - name: apt install tinc
+    - name: Apt install tinc
       become: true
       ansible.builtin.apt:
         name: tinc
         update_cache: true
-    - name: create k2exe tinc network folder
+    - name: Create k2exe tinc network folder
       become: true
       ansible.builtin.file:
         path: /etc/tinc/k2exe/hosts
         state: directory
         mode: '0755'
 
-    - name: copy configs
+    - name: Copy configs
       become: true
       ansible.builtin.copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
       with_items:
         - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' }
 
-    - name: templated tinc.conf
+    - name: Templated tinc.conf
       become: true
       ansible.builtin.template:
         src: files/tinc.conf.j2
@@ -34,7 +34,7 @@
         group: root
         mode: '0644'
 
-    - name: templated tinc-up
+    - name: Templated tinc-up
       become: true
       ansible.builtin.template:
         src: files/tinc-up.j2
@@ -43,7 +43,7 @@
         group: root
         mode: '0755'
 
-    - name: templated tinc-down
+    - name: Templated tinc-down
       become: true
       ansible.builtin.template:
         src: files/tinc-down.j2
@@ -52,7 +52,7 @@
         group: root
         mode: '0755'
 
-    - name: create private key for vpn
+    - name: Create private key for vpn
       become: true
       ansible.builtin.command: tincd -n k2exe -K 4096
       args:
