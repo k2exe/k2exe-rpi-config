@@ -29,7 +29,7 @@
         flamp_install: "{{ 'true' if (flamp != newflamp) else 'false' }}"
     - name: Debug flamp_install
       ansible.builtin.debug: 
-      msg: "{{ flamp_install }}"
+        msg: "{{ flamp_install }}"
     - name: Download flamp and extract
       ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flamp/flamp-{{ newflamp }}.tar.gz
