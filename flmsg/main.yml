@@ -1,10 +1,10 @@
 ---
 # file: flmsg/main.yml
-- name: flmsg
+- name: Flmsg
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed flmsg version # noqa risky-shell-pipe
+    - name: Get installed flmsg version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         if hash flmsg 2>/dev/null; then
             flmsg --version | awk 'FNR == 1 {print $2}'
@@ -13,24 +13,24 @@
         fi
       register: flmsg_version
       changed_when: false
-    - name: debug installed flidigi version
+    - name: Debug installed flidigi version
       ansible.builtin.set_fact: flmsg="{{ flmsg_version.stdout }}"
 
-    - name: check latest flmsg version from sourceforge # noqa risky-shell-pipe
+    - name: Check latest flmsg version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/flmsg/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flmsg_online
       changed_when: false
-    - name: debug latest fldigi version
+    - name: Debug latest fldigi version
       ansible.builtin.set_fact: newflmsg="{{  flmsg_online.stdout  }}"
 
-    - name: install or update to the latest version of flmsg
+    - name: Install or update to the latest version of flmsg
       ansible.builtin.set_fact:
         flmsg_install: "{{ 'true' if ( flmsg != newflmsg ) else 'false' }}"
-    - name: debug flmsg_install
+    - name: Debug flmsg_install
       ansible.builtin.debug: msg="{{ flmsg_install }}"
 
-    - name: download flmsg and extract
+    - name: Download flmsg and extract
       ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flmsg/flmsg-{{ newflmsg }}.tar.gz
         dest: "{{ ansible_env.HOME }}/Downloads/"
@@ -44,20 +44,20 @@
         - ./configure
       when: flmsg_install
 
-    - name: make flmsg
+    - name: Make flmsg
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
       with_items:
         - make -j{{ ansible_facts['processor_count'] }}
       when: flmsg_install
 
-    - name: install flmsg
+    - name: Install flmsg
       become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
       with_items:
         - make install
       when: flmsg_install
 
-    - name: install flmsg desktop icon
+    - name: Install flmsg desktop icon
       ansible.builtin.copy:
         src: flmsg.desktop
         dest: "{{ ansible_env.HOME }}/Desktop/flmsg.desktop"
