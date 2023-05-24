@@ -21,7 +21,7 @@
 
     - name: Copy configs
       become: true
-      ansible.builtin.copy: 
+      ansible.builtin.copy:
         src: 'files/k2exegateway'
         dest: '/etc/tinc/k2exe/hosts'
         mode: '0644'
