@@ -22,11 +22,9 @@
     - name: Copy configs
       become: true
       ansible.builtin.copy: 
-        src: {{ item.src }}
-        dest: {{ item.dest }}
+        src: 'files/k2exegateway'
+        dest: '/etc/tinc/k2exe/hosts'
         mode: '0644'
-      with_items:
-        - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' }
 
     - name: Templated tinc.conf
       become: true
