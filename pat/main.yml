@@ -29,7 +29,7 @@
     - name: Install or update pat
       ansible.builtin.set_fact:
         pat_install: "{{ 'true' if (pat != newpat) else 'false' }}"
-    - name: debug pat_install
+    - name: Debug pat_install
       ansible.builtin.debug:
         msg: "{{ pat_install }}"
 
