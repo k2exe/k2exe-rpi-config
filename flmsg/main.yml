@@ -43,7 +43,7 @@
 
     - name: ./configure flmsg
       ansible.builtin.command:
-      argv:
+      args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
         cmd: ./configure
         creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/config.status"
@@ -51,7 +51,7 @@
 
     - name: Make flmsg
       ansible.builtin.command:
-      argv:
+      args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
         cmd: make -j{{ ansible_facts['processor_count'] }}
         creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/src/flmsg" 
@@ -60,10 +60,10 @@
     - name: Install flmsg
       become: true
       ansible.builtin.command:
-      argv:
+      args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
         cmd: make install
-        creates: /usr/bin/local/flmsg
+        changed_when: false
       when: flmsg_install
 
     - name: Install flmsg desktop icon
