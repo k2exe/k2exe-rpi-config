@@ -37,7 +37,7 @@
       args:
         chdir: '{{ ansible_env.HOME }}/Downloads/librtlsdr/build'
         cmd: make -j{{ ansible_facts['processor_count'] }} install
-        creates: /usr/bin/rtl_test
+      changed_when: false
     - name: Install udev rules
       become: true
       ansible.builtin.copy:
