@@ -26,9 +26,9 @@
 
     - name: Set_tqsl install
       ansible.builtin.set_fact:
-        tqsl_install: "{{ 'true' if ( tqsl != newtqsl ) else 'false' }}"
-    - name: debug tqsl_install
-      ansible.builtin.debug: 
+        tqsl_install: "{{ 'true' if (tqsl != newtqsl) else 'false' }}"
+    - name: Debug tqsl_install
+      ansible.builtin.debug:
         msg: "{{ tqsl_install }}"
 
     - name: Install tqsl dependencies
