@@ -23,14 +23,14 @@
       register: flmsg_online
       changed_when: false
     - name: Debug latest fldigi version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         newflmsg: "{{  flmsg_online.stdout }}"
 
     - name: Install or update to the latest version of flmsg
       ansible.builtin.set_fact:
         flmsg_install: "{{ 'true' if (flmsg != newflmsg) else 'false' }}"
     - name: Debug flmsg_install
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ flmsg_install }}"
 
     - name: Download flmsg and extract
@@ -54,7 +54,7 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
         cmd: make -j{{ ansible_facts['processor_count'] }}
-        creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/src/flmsg" 
+        creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/src/flmsg"
       when: flmsg_install
 
     - name: Install flmsg
@@ -63,7 +63,7 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
         cmd: make install
-        changed_when: false
+      changed_when: false
       when: flmsg_install
 
     - name: Install flmsg desktop icon
