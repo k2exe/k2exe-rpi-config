@@ -13,7 +13,7 @@
       register: js8call_version
       changed_when: false
     - name: Set js8call installed version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         js8call: "{{ js8call_version.stdout }}"
 
     - name: Latest js8call version check # noqa risky-shell-pipe
@@ -32,14 +32,14 @@
       register: js8call_download
       changed_when: false
     - name: Set installed js8call version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         js8call_url: "{{ js8call_download.stdout }}"
 
     - name: Install js8call if not installed
       ansible.builtin.set_fact:
         js8call_install: "{{ 'true' if (js8call != js8call_online) else 'false' }}"
     - name: Debug js8call_install
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ js8call_install }}"
 
     - name: Install js8call dependencies
