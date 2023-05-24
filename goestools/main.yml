@@ -1,6 +1,6 @@
 ---
 # file: goestools/main.yml
-- name: goestools
+- name: Goestools
   hosts: localhost
   connection: localhost
   tasks:
