@@ -90,9 +90,9 @@
 
     - name: Install hamlib
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
+      ansible.builtin.command:
       args:
-        chdir: ""
+        chdir: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
         cmd: make install
-        creates:
+        creates: /usr/local/bin/rigctl
       when: hamlib_install
