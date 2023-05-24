@@ -13,9 +13,11 @@
       register: wsjtx_installed
       changed_when: false
     - name: Set installed wsjt-x version
-      ansible.builtin.set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
-    - name: debug wsjtx_installed
-      ansible.builtin.debug: msg={{ wsjtx }}
+      ansible.builtin.set_fact:
+        wsjtx: "{{ wsjtx_installed.stdout }}"
+    - name: Debug wsjtx_installed
+      ansible.builtin.debug:
+        msg: {{ wsjtx }}
 
     - name: Latest wsjt-x version online # noqa risky-shell-pipe
       ansible.builtin.shell: |
@@ -25,14 +27,16 @@
       changed_when: false
     - name: Set latest wsjt-x version
       ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
-    - name: debug wsjtx_url
-      ansible.builtin.debug: msg="{{ wsjtx_url }}"
+    - name: Debug wsjtx_url
+      ansible.builtin.debug:
+        msg: "{{ wsjtx_url }}"
 
     - name: Set install variable
       ansible.builtin.set_fact:
         wsjtx_install: "{{ 'true' if (wsjtx != wsjtx_online) else 'false' }}"
     - name: Debug wsjtx_install
-      ansible.builtin.debug: msg="{{ wsjtx_install }}"
+      ansible.builtin.debug:
+        msg: "{{ wsjtx_install }}"
 
     - name: Install wsjtx dependencies
       become: true
