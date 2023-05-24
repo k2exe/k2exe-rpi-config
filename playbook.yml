@@ -1,42 +1,57 @@
 ---
 # file: playbook.yml
-- import_playbook: direwolf/main.yml
-  tags:
-  - direwolf
-- import_playbook: fldigi/main.yml
-  tags: [fldigi, nbems]
-- import_playbook: flamp/main.yml
-  tags: [flamp, nbems]
-- import_playbook: flmsg/main.yml
-  tags: [flmsg, nbems]
-- import_playbook: flrig/main.yml
-  tags: [flrig, nbems]
-- import_playbook: flwrap/main.yml
-  tags: [flwrap, nbems]
-- import_playbook: hamlib/main.yml
-  tags:
-  - hamlib
-- import_playbook: jnos/main.yml
-  tags:
-  - jnos
-- import_playbook: js8call/main.yml
-  tags:
-  - js8call
-- import_playbook: pat/main.yml
-  tags:
-  - pat
-- import_playbook: piardop/main.yml
-  tags:
-  - piardop
-- import_playbook: rtl-sdr/main.yml
-  tags:
-  - rtl-sdr
-- import_playbook: tqsl/main.yml
-  tags:
-  - tqsl
-- import_playbook: wsjtx/main.yml
-  tags:
-  - wsjtx
-- import_playbook: xastir/main.yml
-  tags:
-  - xastir
+- name: Run direwolf playbook
+  import_playbook: direwolf/main.yml
+    tags:
+    - direwolf
+- name: Run fldigi playbook
+  import_playbook: fldigi/main.yml
+    tags: [fldigi, nbems]
+- name: Run flamp playbook
+  import_playbook: flamp/main.yml
+    tags: [flamp, nbems]
+- name: Run flmsg playbook
+  import_playbook: flmsg/main.yml
+    tags: [flmsg, nbems]
+- name: Run flrig playbook
+  import_playbook: flrig/main.yml
+    tags: [flrig, nbems]
+- name: Run flwrap playbook
+  import_playbook: flwrap/main.yml
+    tags: [flwrap, nbems]
+- name: Run hamlib playbook
+  import_playbook: hamlib/main.yml
+    tags:
+    - hamlib
+- name: Run jnos playbook
+  import_playbook: jnos/main.yml
+    tags:
+    - jnos
+- name: Run js8call playbook
+  import_playbook: js8call/main.yml
+    tags:
+    - js8call
+- name: Run pat playbook
+  import_playbook: pat/main.yml
+    tags:
+    - pat
+- name: Run piardop playbook
+  import_playbook: piardop/main.yml
+    tags:
+    - piardop
+- name: Run rtl-sdr playbook
+  import_playbook: rtl-sdr/main.yml
+    tags:
+    - rtl-sdr
+- name: Run tqsl playbook
+  import_playbook: tqsl/main.yml
+    tags:
+    - tqsl
+- name: Run wsjtx playbook
+  import_playbook: wsjtx/main.yml
+    tags:
+    - wsjtx
+- name: Run xastis playbook
+  import_playbook: xastir/main.yml
+    tags:
+    - xastir
