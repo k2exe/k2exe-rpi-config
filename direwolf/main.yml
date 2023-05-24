@@ -1,6 +1,6 @@
 ---
 # file: direwolf/main.yml
-- name: direwolf
+- name: Direwolf
   hosts: localhost
   connection: localhost
   tasks:
@@ -8,7 +8,7 @@
       ansible.builtin.set_fact:
         direwolf_install: "{{ 'true' }}"
     - name: Debug direwolf_install
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ direwolf_install }}"
     - name: Install direwolf dependencies
       become: true
