@@ -10,7 +10,7 @@
         pkg:
           - cmake
           - build-essential
-          - libusb-1.0 
+          - libusb-1.0-0-dev 
           - libopencv-dev
           - libproj-dev
         update_cache: true
