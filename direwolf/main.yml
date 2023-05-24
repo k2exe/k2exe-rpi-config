@@ -8,7 +8,8 @@
       ansible.builtin.set_fact:
         direwolf_install: "{{ 'true' }}"
     - name: Debug direwolf_install
-      ansible.builtin.debug: msg="{{ direwolf_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ direwolf_install }}"
     - name: Install direwolf dependencies
       become: true
       ansible.builtin.apt:
@@ -38,14 +39,18 @@
         state: directory
         mode: '0755'
     - name: Cmake direwolf
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - cmake ..
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: cmake ..
+        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src"
       when: direwolf_install
     - name: Make direwolf
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "chdir={{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src/direwolf"
       when: direwolf_install
     - name: Make install direwolf
       become: true
@@ -53,10 +58,10 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
         cmd: make install
-        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src/direwolf"
+        creates: /usr/local/bin/direwolf
       when: direwolf_install
     - name: Make install-conf
-      ansible.builtin.command: 
+      ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
         cmd: make install-conf
