@@ -95,5 +95,5 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
         cmd: make install
-        creates: /usr/local/bin/rigctl
+        changed_when: false
       when: hamlib_install
