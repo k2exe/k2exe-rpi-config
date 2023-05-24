@@ -56,7 +56,7 @@
 
     - name: Install flamp
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}'
+      ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/flamp-{{ newflamp }}"
         cmd: make install
