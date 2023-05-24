@@ -7,9 +7,10 @@
     - name: Install or update to the latest version of xastir
       ansible.builtin.set_fact:
         xastir_install: "{{ 'true' }}"
-    - name: debug xastir_install
-      ansible.builtin.debug: msg="{{ xastir_install }}"
-    - name: install xastir dependencies
+    - name: Debug xastir_install
+      ansible.builtin.debug:
+        msg: "{{ xastir_install }}"
+    - name: Install xastir dependencies
       become: true
       ansible.builtin.apt:
         pkg:
@@ -43,6 +44,7 @@
         cache_valid_time: 3600
     - name: Set fonts
       ansible.builtin.command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
+      changed_when: false
       when: xastir_install
     - name: Clone xastir repo
       ansible.builtin.git:
@@ -58,7 +60,7 @@
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
         state: directory
-        mode: 0755
+        mode: "0755"
     - name: Configure xastir
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
       with_items:
