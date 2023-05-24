@@ -9,7 +9,7 @@
       register: hamlib_version
       changed_when: false
     - name: Debug installed hamlib version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         hamlib: "{{ hamlib_version.stdout }}"
 
     - name: Check latest hamlib version # noqa risky-shell-pipe
@@ -21,14 +21,15 @@
       changed_when: false
 
     - name: Debug latest hamlib
-      ansible.builtin.set_fact: 
-        newhamlib: "{{ hamlib_online.stdout  }}"
+      ansible.builtin.set_fact:
+        newhamlib: "{{ hamlib_online.stdout }}"
 
     - name: Install or update to the latest version of hamlib
       ansible.builtin.set_fact:
         hamlib_install: "{{ 'true' if (hamlib != newhamlib) else 'false' }}"
     - name: Debug install status
-      ansible.builtin.debug: msg="{{ hamlib_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ hamlib_install }}"
 
     - name: Ensure hamlib not installed by apt
       become: true
