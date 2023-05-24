@@ -26,7 +26,8 @@
       register: wsjtx_online
       changed_when: false
     - name: Set latest wsjt-x version
-      ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
+      ansible.builtin.set_fact:
+        wsjtx_url: "https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - name: Debug wsjtx_url
       ansible.builtin.debug:
         msg: "{{ wsjtx_url }}"
