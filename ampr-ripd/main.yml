@@ -1,21 +1,21 @@
 ---
 # file: ampr-ripd/main.yml
-- name: install ampr-ripd
+- name: Install ampr-ripd
   hosts: localhost
   connection: localhost
   tasks:
-    - name: download and extract ampr-ripd.tgz
+    - name: Download and extract ampr-ripd.tgz
       ansible.builtin.unarchive:
         src: http://www.yo2loj.ro/hamprojects/ampr-ripd-2.4.tgz
         dest: "{{ ansible_env.HOME }}/Downloads"
         remote_src: true
         creates: "{{ ansible_env.HOME }}/Downloads/ampr-ripd-2.4/"
-    - name: make ampr-ripd
+    - name: Make ampr-ripd
       ansible.builtin.command:
         cmd: make
         chdir: "{{ ansible_env.HOME }}/Downloads/ampr-ripd-2.4/"
         creates: "{{ ansible_env.HOME }}/Downloads/ampr-ripd-2.4/ampr-ripd"
-    - name: make install ampr-ripd
+    - name: Make install ampr-ripd
       become: true
       ansible.builtin.command:
         cmd: make install
