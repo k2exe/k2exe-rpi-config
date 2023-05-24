@@ -23,7 +23,8 @@
       register: js8call_online
       changed_when: false
     - name: Set latest js8call version
-      ansible.builtin.set_fact: newjs8call="{{ js8call_online.stdout }}"
+      ansible.builtin.set_fact:
+        newjs8call: "{{ js8call_online.stdout }}"
 
     - name: Get js8call download link # noqa risky-shell-pipe
       ansible.builtin.shell: |
