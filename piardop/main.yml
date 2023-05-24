@@ -1,26 +1,26 @@
 ---
 # file: piardop/main.yml
-- name: piardop
+- name: Piardop
   hosts: localhost
   connection: localhost
   tasks:
-    - name: set piardop version
+    - name: Set piardop version
       ansible.builtin.set_fact: piardop="NOT INSTALLED"
-    - name: latest piardop version check # noqa risky-shell-pipe
+    - name: Latest piardop version check # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://www.cantab.net/users/john.wiseman/Downloads/Beta/ | grep 'href="piardopc"' | grep -o 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
       register: piardop_online
       changed_when: false
-    - name: set latest piardop version
+    - name: Set latest piardop version
       ansible.builtin.set_fact: newpiardop="{{ piardop_online.stdout }}"
 
-    - name: create piardop folder
+    - name: Create piardop folder
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/piardop"
         state: directory
         mode: '0755'
 
-    - name: download piardop to ~/piardop
+    - name: Download piardop to ~/piardop
       ansible.builtin.get_url:
         url: http://www.cantab.net/users/john.wiseman/Downloads/Beta/piardopc
         dest: "{{ ansible_env.HOME }}/piardop/piardopc"
