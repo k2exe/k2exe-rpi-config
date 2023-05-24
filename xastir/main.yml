@@ -1,10 +1,10 @@
 ---
 # file: xastir/main.yml
-- name: xastir
+- name: Xastir
   hosts: localhost
   connection: localhost
   tasks:
-    - name: install or update to the latest version of xastir
+    - name: Install or update to the latest version of xastir
       ansible.builtin.set_fact:
         xastir_install: "{{ 'true' }}"
     - name: debug xastir_install
@@ -41,35 +41,35 @@
           - xorg-dev
         update_cache: true
         cache_valid_time: 3600
-    - name: set fonts
+    - name: Set fonts
       ansible.builtin.command: 'xset +fp /usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi'
       when: xastir_install
-    - name: clone xastir repo
+    - name: Clone xastir repo
       ansible.builtin.git:
         repo: 'https://www.github.com/Xastir/Xastir.git'
         dest: "{{ ansible_env.HOME }}/Downloads/Xastir"
         version: master
-    - name: bootstrap xastir
+    - name: Bootstrap xastir
       ansible.builtin.command: 'bash {{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/'
       with_items:
         - ./bootstrap.sh
       when: xastir_install
-    - name: build folder
+    - name: Build folder
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
         state: directory
         mode: 0755
-    - name: configure xastir
+    - name: Configure xastir
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
       with_items:
         - ../configure CPPFLAGS="-I/usr/include/geotiff"
       when: xastir_install
-    - name: make
+    - name: Make
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
       with_items:
         - make -j{{ ansible_facts['processor_count'] }}
       when: xastir_install
-    - name: make install
+    - name: Make install
       become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
       with_items:
