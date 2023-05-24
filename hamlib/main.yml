@@ -9,22 +9,24 @@
       register: hamlib_version
       changed_when: false
     - name: Debug installed hamlib version
-      ansible.builtin.set_fact: hamlib="{{ hamlib_version.stdout }}"
+      ansible.builtin.set_fact: 
+        hamlib: "{{ hamlib_version.stdout }}"
 
     - name: Check latest hamlib version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/hamlib/files/latest/download |
-        grep -o https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9].[0-9] |
+        grep -o 'https://downloads.sourceforge.net/project/hamlib/hamlib/[0-9]\.[0-9]\.[0-9]' |
         head -n 1 | awk -F "/" '{print $7}'
       register: hamlib_online
       changed_when: false
 
     - name: Debug latest hamlib
-      ansible.builtin.set_fact: newhamlib="{{ hamlib_online.stdout  }}"
+      ansible.builtin.set_fact: 
+        newhamlib: "{{ hamlib_online.stdout  }}"
 
     - name: Install or update to the latest version of hamlib
       ansible.builtin.set_fact:
-        hamlib_install: "{{ 'true' if ( hamlib != newhamlib ) else 'false' }}"
+        hamlib_install: "{{ 'true' if (hamlib != newhamlib) else 'false' }}"
     - name: Debug install status
       ansible.builtin.debug: msg="{{ hamlib_install }}"
 
@@ -71,20 +73,26 @@
       when: hamlib_install
 
     - name: ./configure hamlib
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
-      with_items:
-        - ./configure
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
+        cmd: ./configure
+        creates: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}/config.status"
       when: hamlib_install
 
     - name: Make hamlib
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}/tests/rigctl"
       when: hamlib_install
 
     - name: Install hamlib
       become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}'
-      with_items:
-        - make install
+      args:
+        chdir: ""
+        cmd: make install
+        creates:
       when: hamlib_install
