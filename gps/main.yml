@@ -1,6 +1,6 @@
 ---
 # file: gps/main.yml
-- name: configure time sync from GPS module
+- name: Configure time sync from GPS module
   hosts: localhost
   connection: localhost
   tasks:
@@ -13,11 +13,11 @@
         - chrony
         - python3-gi-cairo
         - libgps-dev
-  - name: register USB GPS device by ID
+  - name: Register USB GPS device by ID
     ansible.builtin.command: set -o pipefail && ls /dev/serial/by-id/ | grep GPS | head -1 || echo "/dev/ttyACM0"
     register: gps_device
     changed_when: false
-  - name: configure gpsd
+  - name: Configure gpsd
     become: true
     ansible.builtin.template:
       src: files/gpsd.j2
@@ -25,17 +25,17 @@
       owner: root
       group: root
       mode: '0644'
-  - name: configure chrony
+  - name: Configure chrony
     become: true
     ansible.builtin.lineinfile:
       path: /etc/chrony/chrony.conf
       line: "refclock SHM 0 offset 0.5 delay 0.2 refid NMEA"
-  - name: restart and reload gpsd service
+  - name: Restart and reload gpsd service
     ansible.builtin.systemd:
       name: gpsd
       state: restarted
       daemon_reload: true
-  - name: restart and reload chrony service
+  - name: Restart and reload chrony service
     ansible.builtin.systemd:
       name: chrony
       enabled: true
