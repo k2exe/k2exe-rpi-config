@@ -1,6 +1,6 @@
 ---
 # file: jnos/main.yml
-- name: install and configure JNOS on raspberry pi
+- name: Install and configure JNOS on raspberry pi
   hosts: localhost
   connection: localhost
   tasks:
@@ -9,14 +9,14 @@
       ansible.builtin.user:
         name: nosuser
         groups: sudo,adm
-    - name: install jnos dependencies
+    - name: Install jnos dependencies
       become: true
       ansible.builtin.apt:
         pkg:
           - libssl-dev
           - libncurses5-dev
           - libncursesw5-dev
-    - name: download and extract archive
+    - name: Download and extract archive
       ansible.builtin.unarchive:
         src: https://www.langelaar.net/projects/jnos2/downloads/linux/releases/jnos2.0m.current.tar.gz
         dest: /home/nosuser/Downloads/
@@ -27,12 +27,12 @@
         cmd: ./configure
         chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/configure.okay"
-    - name: make jnos
+    - name: Make jnos
       ansible.builtin.command:
         cmd: make -j{{ ansible_facts['processor_count'] }}
         chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
-    - name: move installer
+    - name: Move installer
       ansible.builtin.copy: src={{ item.src }} dest={{ item.dest }} mode='0755'
       with_items:
         - {src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnos', dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1'}
