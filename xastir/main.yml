@@ -65,17 +65,23 @@
         mode: "0755"
     - name: Configure xastir
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
-      with_items:
-        - ../configure CPPFLAGS="-I/usr/include/geotiff"
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
+        cmd: ../configure CPPFLAGS="-I/usr/include/geotiff"
+        creates: "{{ ansible_env.HOME }}/Downloads/Xastir/build/Makefile"
       when: xastir_install
     - name: Make
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/Xastir/build/src/xastir"
       when: xastir_install
     - name: Make install
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
+        cmd: make install
+      changed_when: false
       when: xastir_install
