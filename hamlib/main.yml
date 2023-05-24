@@ -28,7 +28,7 @@
       ansible.builtin.set_fact:
         hamlib_install: "{{ 'true' if (hamlib != newhamlib) else 'false' }}"
     - name: Debug install status
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ hamlib_install }}"
 
     - name: Ensure hamlib not installed by apt
