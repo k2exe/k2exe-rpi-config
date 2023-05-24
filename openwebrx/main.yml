@@ -2,14 +2,14 @@
 # file: openwebrx/main.yml
 - import_playbook: ../docker/main.yml
 
-- name: openwebrx
+- name: Openwebrx
   hosts: localhost
   connection: localhost
   tasks:
-    - name: create docker volume
+    - name: Create docker volume
       community.docker.docker_volume:
         name: openwebrx-settings
-    - name: create and configure openwebrx container
+    - name: Create and configure openwebrx container
       community.docker.docker_container:
         name: openwebrx
         image: jketterl/openwebrx:stable-armv7l
