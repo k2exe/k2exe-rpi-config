@@ -1,12 +1,13 @@
 ---
 # file: fldigi/main.yml
-- import_playbook: ../hamlib/main.yml
+- name: Install hamlib first if required
+  ansible.builtin.import_playbook: ../hamlib/main.yml
 
-- name: fldigi
+- name: Fldigi
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed fldigi version # noqa risky-shell-pipe
+    - name: Get installed fldigi version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         if hash fldigi 2>/dev/null; then
             fldigi --version | awk 'FNR == 1 {print $2 }'
@@ -14,26 +15,29 @@
         fi
       register: fldigi_version
       changed_when: false
+    - name: Debug installed fldigi version
+      ansible.builtin.set_fact:
+        fldigi: "{{ fldigi_version.stdout }}"
 
-    - name: debug installed fldigi version
-      ansible.builtin.set_fact: fldigi="{{ fldigi_version.stdout }}"
-
-    - name: check latest fldigi version from sourceforge # noqa risky-shell-pipe
+    - name: Check latest fldigi version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
       register: fldigi_online
       changed_when: false
 
-    - name: debug latest fldigi version
-      ansible.builtin.set_fact: newfldigi="{{ fldigi_online.stdout }}"
-
-    - name: install or update to the latest version of fldigi
+    - name: Debug latest fldigi version
       ansible.builtin.set_fact:
-        fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
-    - name: debug install status
-      ansible.builtin.debug: msg="{{ fldigi_install }}"
+        newfldigi: "{{ fldigi_online.stdout }}"
 
-    - name: install fldigi dependencies
+    - name: Install or update to the latest version of fldigi
+      ansible.builtin.set_fact:
+        fldigi_install: "{{ 'true' if (fldigi != newfldigi) else 'false' }}"
+
+    - name: Debug install status
+      ansible.builtin.debug:
+        msg: "{{ fldigi_install }}"
+
+    - name: Install fldigi dependencies
       become: true
       ansible.builtin.apt:
         pkg:
@@ -64,7 +68,7 @@
         cache_valid_time: 3600
       when: fldigi_install
 
-    - name: download fldigi and extract
+    - name: Download fldigi and extract
       ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/fldigi/fldigi-{{ newfldigi }}.tar.gz
         dest: "{{ ansible_env.HOME }}/Downloads/"
@@ -73,25 +77,31 @@
       when: fldigi_install
 
     - name: ./configure fldigi
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - ./configure
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: ./configure
+        creates: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}/config.status"
       when: fldigi_install
 
-    - name: make fldigi
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+    - name: Make fldigi
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}/src/fldigi"
       when: fldigi_install
 
-    - name: install fldigi
+    - name: Install fldigi
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: make install
+      changed_when: false
       when: fldigi_install
 
-    - name: install fldigi desktop icon
+    - name: Install fldigi desktop icon
       ansible.builtin.copy:
         src: fldigi.desktop
         dest: "{{ ansible_env.HOME }}/Desktop/fldigi.desktop"

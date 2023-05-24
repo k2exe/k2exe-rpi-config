@@ -21,6 +21,7 @@ jobs:
       - run: ansible-lint flmsg/main.yml
       - run: ansible-lint flrig/main.yml
       - run: ansible-lint flwrap/main.yml
+      - run: ansible-lint goestools/main.yml
       - run: ansible-lint gps/main.yml
       - run: ansible-lint hamlib/main.yml
       - run: ansible-lint jnos/main.yml

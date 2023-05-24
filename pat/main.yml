@@ -1,10 +1,10 @@
 ---
 # file: pat/main.yml
-- name: install pat
+- name: Install pat
   hosts: localhost
   connection: localhost
   tasks:
-    - name: check installed pat version # noqa risky-shell-pipe
+    - name: Check installed pat version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         if hash pat 2>/dev/null; then
           pat version | awk -F 'v' '{print $2}' | head -c 5
@@ -12,25 +12,28 @@
         fi
       register: pat_version
       changed_when: false
-    - name: set installed pat version
-      ansible.builtin.set_fact: pat="{{ pat_version.stdout }}"
+    - name: Set installed pat version
+      ansible.builtin.set_fact:
+        pat: "{{ pat_version.stdout }}"
 
-    - name: check latest pat version # noqa risky-shell-pipe
+    - name: Check latest pat version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://github.com/la5nta/pat/releases | grep -m 1 "amd64.deb" |
         awk -F '_' '{print $2}'
       register: pat_online
       changed_when: false
-    - name: set latest pat version
-      ansible.builtin.set_fact: newpat="{{ pat_online.stdout }}"
+    - name: Set latest pat version
+      ansible.builtin.set_fact:
+        newpat: "{{ pat_online.stdout }}"
 
-    - name: install or update pat
+    - name: Install or update pat
       ansible.builtin.set_fact:
         pat_install: "{{ 'true' if (pat != newpat) else 'false' }}"
-    - name: debug pat_install
-      ansible.builtin.debug: msg="{{ pat_install }}"
+    - name: Debug pat_install
+      ansible.builtin.debug:
+        msg: "{{ pat_install }}"
 
-    - name: download pat deb file and install
+    - name: Download pat deb file and install
       become: true
       ansible.builtin.apt:
         deb: https://github.com/la5nta/pat/releases/download/v{{ newpat }}/pat_{{ newpat }}_linux_armhf.deb

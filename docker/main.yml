@@ -1,26 +1,26 @@
 ---
 # file: docker/main.yml
-- name: docker
+- name: Docker
   hosts: localhost
   connection: localhost
   tasks:
-    - name: ensure downloads folder exists
+    - name: Ensure downloads folder exists
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/Downloads"
         state: directory
         mode: '0755'
-    - name: download docker install script
+    - name: Download docker install script
       ansible.builtin.get_url:
         url: https://get.docker.com
         dest: "{{ ansible_env.HOME }}/Downloads/get-docker.sh"
         mode: '0755'
-    - name: install docker # noqa command-instead-of-shell (requires executable)
+    - name: Install docker # noqa command-instead-of-shell (requires executable)
       become: true
       ansible.builtin.shell: "{{ ansible_env.HOME }}/Downloads/get-docker.sh"
       args:
         creates: /usr/bin/docker
         executable: /bin/sh
-    - name: add current user to docker group
+    - name: Add current user to docker group
       become: true
       ansible.builtin.user:
         name: "{{ ansible_env.USER }}"

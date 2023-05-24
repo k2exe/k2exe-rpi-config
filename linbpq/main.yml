@@ -1,60 +1,60 @@
 ---
 # file: linbpq/main.yml
-- name: linbpq
+- name: Linbpq
   hosts: localhost
   connection: localhost
   tasks:
-    - name: create linbpq directory
+    - name: Create linbpq directory
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/linbpq"
         state: directory
-        mode: 0755
+        mode: '0755'
 
-    - name: download pilinbpq as linbpq
+    - name: Download pilinbpq as linbpq
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/pilinbpq
         dest: "{{ ansible_env.HOME }}/linbpq/linbpq"
-        mode: 0755
+        mode: '0755'
 
-    - name: download piBPQAPRS as bpqaprs
+    - name: Download piBPQAPRS as bpqaprs
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQAPRS
         dest: "{{ ansible_env.HOME }}/linbpq/bpqaprs"
-        mode: 0755
+        mode: '0755'
 
-    - name: download configuration file
+    - name: Download configuration file
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/SimpleRMSGateway_bpq32.cfg
         dest: "{{ ansible_env.HOME }}/linbpq/bpq32.cfg"
-        mode: 0644
+        mode: '0644'
 
-    - name: create HTML directory
+    - name: Create HTML directory
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/linbpq/HTML"
         state: directory
-        mode: 0755
+        mode: '0755'
 
-    - name: download and unzip HTML documentation
+    - name: Download and unzip HTML documentation
       ansible.builtin.unarchive:
         src: https://www.cantab.net/users/john.wiseman/Downloads/Beta/HTMLPages.zip
         dest: "{{ ansible_env.HOME }}/linbpq/HTML"
         remote_src: true
 
-    - name: download and unzip APRS client
+    - name: Download and unzip APRS client
       ansible.builtin.unarchive:
         src: https://www.cantab.net/users/john.wiseman/Downloads/LinBPQAPRS.zip
         dest: "{{ ansible_env.HOME }}/linbpq"
         remote_src: true
 
-    - name: download bpqconfiggen
+    - name: Download bpqconfiggen
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQConfigGen
         dest: "{{ ansible_env.HOME }}/linbpq/piBPQConfigGen"
-        mode: 0755
+        mode: '0755'
 
-    - name: install bpq-config desktop icon
+    - name: Install bpq-config desktop icon
       become: true
       ansible.builtin.template:
         src: bpq-config.desktop.j2
         dest: /usr/share/applications/bpq-config.desktop
-        mode: "0644"
+        mode: '0644'

@@ -1,15 +1,16 @@
 ---
 # file: direwolf/main.yml
-- name: direwolf
+- name: Direwolf
   hosts: localhost
   connection: localhost
   tasks:
-    - name: install or update to the latest version of direwolf
+    - name: Install or update to the latest version of direwolf
       ansible.builtin.set_fact:
         direwolf_install: "{{ 'true' }}"
-    - name: debug direwolf_install
-      ansible.builtin.debug: msg="{{ direwolf_install }}"
-    - name: install direwolf dependencies
+    - name: Debug direwolf_install
+      ansible.builtin.debug:
+        msg: "{{ direwolf_install }}"
+    - name: Install direwolf dependencies
       become: true
       ansible.builtin.apt:
         pkg:
@@ -27,34 +28,42 @@
           - python3-pip
         update_cache: true
         cache_valid_time: 3600
-    - name: clone direwolf repo
+    - name: Clone direwolf repo
       ansible.builtin.git:
         repo: 'https://www.github.com/wb2osz/direwolf'
         dest: "{{ ansible_env.HOME }}/Downloads/direwolf"
         version: dev
-    - name: build folder
+    - name: Build folder
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
         state: directory
         mode: '0755'
-    - name: cmake direwolf
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - cmake ..
+    - name: Cmake direwolf
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: cmake ..
+        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src"
       when: direwolf_install
-    - name: make direwolf
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+    - name: Make direwolf
+      ansible.builtin.command:
+      args:
+        chdir: "chdir={{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src/direwolf"
       when: direwolf_install
-    - name: make install direwolf
+    - name: Make install direwolf
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: make install
+        creates: /usr/local/bin/direwolf
       when: direwolf_install
-    - name: make install-conf
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/direwolf/build'
-      with_items:
-        - make install-conf
+    - name: Make install-conf
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
+        cmd: make install-conf
+        creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/direwolf.conf"
       when: direwolf_install
