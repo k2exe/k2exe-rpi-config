@@ -23,14 +23,14 @@
       register: flwrap_online
       changed_when: false
     - name: Set flwrap latest version
-      ansible.builtin.set_fact: 
-        newflwrap: "{{  flwrap_online.stdout  }}"
+      ansible.builtin.set_fact:
+        newflwrap: "{{  flwrap_online.stdout }}"
 
     - name: Install or update to the latest version of flwrap
       ansible.builtin.set_fact:
         flwrap_install: "{{ 'true' if (flwrap != newflwrap) else 'false' }}"
     - name: Debug flwrap_install
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ flwrap_install }}"
 
     - name: Download flwrap and extract
