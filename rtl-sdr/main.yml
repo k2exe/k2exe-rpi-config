@@ -8,7 +8,8 @@
       ansible.builtin.set_fact:
         rtlsdr_install: "{{ 'true' }}"
     - name: Debug rtlsdr_install
-      ansible.builtin.debug: msg="{{ rtlsdr_install }}"
+      ansible.builtin.debug:
+        msg: "{{ rtlsdr_install }}"
     - name: Install rtl-sdr dependencies
       become: true
       ansible.builtin.apt:
@@ -42,30 +43,38 @@
         state: directory
         mode: '0755'
     - name: Cmake rtl-sdr
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
-      with_items:
-        - cmake -j{{ ansible_facts['processor_count'] }}  ../ -DINSTALL_UDEV_RULES=ON
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/build"
+        cmd: cmake -j{{ ansible_facts['processor_count'] }}  ../ -DINSTALL_UDEV_RULES=ON
+        creates: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/rtlsdrConfig.cmake"
       when: rtlsdr_install
     - name: Make rtl-sdr
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/build"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/build/src/rtl_test"
       when: rtlsdr_install
     - name: Install rtl-sdr
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/build"
+        cmd: make install
+      changed_when: false
       when: rtlsdr_install
     - name: Ldconfig
       become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/build'
       with_items:
         - ldconfig
+      changed_when: false
       when: rtlsdr_install
     - name: Install rtl-sdr rules
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/rtl-sdr/'
-      with_items:
-        - cp rtl-sdr.rules /etc/udev/rules.d/
+      ansible.builtin.copy:
+        src: "{{ ansible_env.HOME }}/Downloads/rtl-sdr/rtl-sdr.rules"
+        dest: /etc/udev/rules.d/rtl-sdr.rules
+        mode: '0644' 
       when: rtlsdr_install
