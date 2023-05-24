@@ -32,14 +32,14 @@
         cmd: make -j{{ ansible_facts['processor_count'] }}
         chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
-    - name: Move installer
-      ansible.builtin.copy: 
-        src: {{ item.src }}
-        dest: {{ item.dest }}
-        mode: '0755'
-      with_items:
-        - {src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnos', dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1'}
-        - {src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller', dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1'}
+#    - name: Move installer
+#      ansible.builtin.copy: 
+#        src: {{ item.src }}
+#        dest: {{ item.dest }}
+#        mode: '0755'
+#      with_items:
+#        - {src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnos', dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1'}
+#        - {src: '{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller', dest: '{{ ansible_env.HOME }}/jnos2.0m.current/rsync/installerv2.1'}
 ### Perform custom install
 #    - name: install jnos
 #      become: true
