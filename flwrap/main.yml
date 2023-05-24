@@ -4,7 +4,7 @@
   hosts: localhost
   connection: localhost
   tasks:
-    - name: get installed flwrap version # noqa risky-shell-pipe
+    - name: Get installed flwrap version # noqa risky-shell-pipe
       ansible.builtin.shell: |
         if hash flwrap 2>/dev/null; then
             flwrap --version | awk 'FNR == 1 {print $2}'
