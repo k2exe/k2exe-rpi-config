@@ -13,6 +13,8 @@
           - libusb-1.0 
           - libopencv-dev
           - libproj-dev
+        update_cache: true
+        cache_valid_time: 3600
     - name: clone librtlsdr
       ansible.builtin.git:
         repo: 'https://github.com/steve-m/librtlsdr'
