@@ -8,31 +8,31 @@
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/linbpq"
         state: directory
-        mode: 0755
+        mode: '0755'
 
     - name: Download pilinbpq as linbpq
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/pilinbpq
         dest: "{{ ansible_env.HOME }}/linbpq/linbpq"
-        mode: 0755
+        mode: '0755'
 
     - name: Download piBPQAPRS as bpqaprs
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQAPRS
         dest: "{{ ansible_env.HOME }}/linbpq/bpqaprs"
-        mode: 0755
+        mode: '0755'
 
     - name: Download configuration file
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/SimpleRMSGateway_bpq32.cfg
         dest: "{{ ansible_env.HOME }}/linbpq/bpq32.cfg"
-        mode: 0644
+        mode: '0644'
 
     - name: Create HTML directory
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/linbpq/HTML"
         state: directory
-        mode: 0755
+        mode: '0755'
 
     - name: Download and unzip HTML documentation
       ansible.builtin.unarchive:
@@ -50,11 +50,11 @@
       ansible.builtin.get_url:
         url: https://www.cantab.net/users/john.wiseman/Downloads/Beta/piBPQConfigGen
         dest: "{{ ansible_env.HOME }}/linbpq/piBPQConfigGen"
-        mode: 0755
+        mode: '0755'
 
     - name: Install bpq-config desktop icon
       become: true
       ansible.builtin.template:
         src: bpq-config.desktop.j2
         dest: /usr/share/applications/bpq-config.desktop
-        mode: "0644"
+        mode: '0644'
