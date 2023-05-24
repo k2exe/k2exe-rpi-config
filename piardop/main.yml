@@ -5,14 +5,16 @@
   connection: localhost
   tasks:
     - name: Set piardop version
-      ansible.builtin.set_fact: piardop="NOT INSTALLED"
+      ansible.builtin.set_fact: 
+        piardop: "NOT INSTALLED"
     - name: Latest piardop version check # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://www.cantab.net/users/john.wiseman/Downloads/Beta/ | grep 'href="piardopc"' | grep -o 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]
       register: piardop_online
       changed_when: false
     - name: Set latest piardop version
-      ansible.builtin.set_fact: newpiardop="{{ piardop_online.stdout }}"
+      ansible.builtin.set_fact:
+        newpiardop: "{{ piardop_online.stdout }}"
 
     - name: Create piardop folder
       ansible.builtin.file:
