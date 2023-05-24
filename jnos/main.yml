@@ -33,7 +33,7 @@
         chdir: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync"
         creates: "{{ ansible_env.HOME }}/Downloads/jnos2.0m.current/rsync/jnosinstaller"
 #    - name: Move installer
-#      ansible.builtin.copy: 
+#      ansible.builtin.copy:
 #        src: {{ item.src }}
 #        dest: {{ item.dest }}
 #        mode: '0755'
