@@ -1,10 +1,10 @@
 ---
 # file: wsjtx/main.yml
-- name: wsjtx
+- name: Wsjtx
   hosts: localhost
   connection: localhost
   tasks:
-    - name: check wsjtx installed # noqa risky-shell-pipe
+    - name: Check wsjtx installed # noqa risky-shell-pipe
       ansible.builtin.shell: |
         if hash wsjtx 2>/dev/null; then
             wsjtx_app_version -v | cut -f 2 -d' '
@@ -12,29 +12,29 @@
         fi
       register: wsjtx_installed
       changed_when: false
-    - name: set installed wsjt-x version
+    - name: Set installed wsjt-x version
       ansible.builtin.set_fact: wsjtx="{{ wsjtx_installed.stdout }}"
     - name: debug wsjtx_installed
       ansible.builtin.debug: msg={{ wsjtx }}
 
-    - name: latest wsjt-x version online # noqa risky-shell-pipe
+    - name: Latest wsjt-x version online # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://physics.princeton.edu/pulsar/k1jt/wsjtx.html |
         grep "armhf" | grep -o [0-9].[0-9].[0-9] | head -n 1
       register: wsjtx_online
       changed_when: false
-    - name: set latest wsjt-x version
+    - name: Set latest wsjt-x version
       ansible.builtin.set_fact: wsjtx_url="https://physics.princeton.edu/pulsar/k1jt/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
     - name: debug wsjtx_url
       ansible.builtin.debug: msg="{{ wsjtx_url }}"
 
-    - name: set install variable
+    - name: Set install variable
       ansible.builtin.set_fact:
         wsjtx_install: "{{ 'true' if (wsjtx != wsjtx_online) else 'false' }}"
-    - name: debug wsjtx_install
+    - name: Debug wsjtx_install
       ansible.builtin.debug: msg="{{ wsjtx_install }}"
 
-    - name: install wsjtx dependencies
+    - name: Install wsjtx dependencies
       become: true
       ansible.builtin.apt:
         pkg:
@@ -50,13 +50,13 @@
         cache_valid_time: 3600
       when: wsjtx_install
 
-    - name: download wsjtx deb file and install
+    - name: Download wsjtx deb file and install
       become: true
       ansible.builtin.apt:
         deb: "{{ wsjtx_url }}"
       when: wsjtx_install
 
-    - name: install wsjtx desktop icon
+    - name: Install wsjtx desktop icon
       ansible.builtin.copy:
         src: wsjtx.desktop
         dest: "{{ ansible_env.HOME }}/Desktop/wsjtx.desktop"
