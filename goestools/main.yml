@@ -7,7 +7,7 @@
     - name: install goestools dependencies
       become: true
       ansible.builtin.apt:
-        pgk:
+        pkg:
           - cmake
           - build-essential
           - libusb-1.0 
