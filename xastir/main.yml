@@ -64,7 +64,7 @@
         state: directory
         mode: "0755"
     - name: Configure xastir
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/build'
+      ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/Xastir/build"
         cmd: ../configure CPPFLAGS="-I/usr/include/geotiff"
