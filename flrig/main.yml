@@ -23,7 +23,7 @@
       register: flrig_online
       changed_when: false
     - name: Set latest flrig version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         newflrig: "{{  flrig_online.stdout }}"
 
     - name: Install or update to the latest version of flrig
