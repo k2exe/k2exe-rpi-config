@@ -14,7 +14,8 @@
       register: flmsg_version
       changed_when: false
     - name: Debug installed flidigi version
-      ansible.builtin.set_fact: flmsg="{{ flmsg_version.stdout }}"
+      ansible.builtin.set_fact: 
+        flmsg: "{{ flmsg_version.stdout }}"
 
     - name: Check latest flmsg version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
@@ -22,13 +23,15 @@
       register: flmsg_online
       changed_when: false
     - name: Debug latest fldigi version
-      ansible.builtin.set_fact: newflmsg="{{  flmsg_online.stdout  }}"
+      ansible.builtin.set_fact: 
+        newflmsg: "{{  flmsg_online.stdout }}"
 
     - name: Install or update to the latest version of flmsg
       ansible.builtin.set_fact:
-        flmsg_install: "{{ 'true' if ( flmsg != newflmsg ) else 'false' }}"
+        flmsg_install: "{{ 'true' if (flmsg != newflmsg) else 'false' }}"
     - name: Debug flmsg_install
-      ansible.builtin.debug: msg="{{ flmsg_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ flmsg_install }}"
 
     - name: Download flmsg and extract
       ansible.builtin.unarchive:
@@ -39,15 +42,19 @@
       when: flmsg_install
 
     - name: ./configure flmsg
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
-      with_items:
-        - ./configure
+      ansible.builtin.command:
+      argv:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
+        cmd: ./configure
+        creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/config.status"
       when: flmsg_install
 
     - name: Make flmsg
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      argv:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/flmsg-{{ newflmsg }}/src/flmsg" 
       when: flmsg_install
 
     - name: Install flmsg
