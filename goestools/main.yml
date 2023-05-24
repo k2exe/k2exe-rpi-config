@@ -1,0 +1,83 @@
+---
+# file: goestools/main.yml
+- name: goestools
+  hosts: localhost
+  connection: localhost
+  tasks:
+    - name: install goestools dependencies
+      become: true
+      ansible.builtin.apt:
+        pgk:
+          - cmake
+          - build-essential
+          - libusb-1.0 
+          - libopencv-dev
+          - libproj-dev
+    - name: clone librtlsdr
+      ansible.builtin.git:
+        repo: 'https://github.com/steve-m/librtlsdr'
+        dest: "{{ ansible_env.HOME }}/Downloads/librtlsdr"
+        version: master
+    - name: build folder
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Downloads/librtlsdr/build"
+        state: directory
+        mode: '0755'
+    - name: cmake librtlsdr
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/librtlsdr/build"
+        cmd: cmake -j{{ ansible_facts['processor_count'] }} -DCMAKE_INSTALL_PREFIX:PATH=/usr -DINSTALL_UDEV_RULES=ON ..
+        creates: "{{ ansible_env.HOME }}/Downloads/librtlsdr/build/src/rtl_test"
+    - name: make install
+      become: true
+      ansible.builtin.command:
+      args:
+        chdir: '{{ ansible_env.HOME }}/Downloads/librtlsdr/build'
+        cmd: make -j{{ ansible_facts['processor_count'] }} install
+        creates: /usr/bin/rtl_test
+    - name: install udev rules
+      become: true
+      ansible.builtin.copy: 
+        src: "{{  ansible_env.HOME }}/Downloads/librtlsdr/rtl-sdr.rules"
+        dest: /etc/udev/rules.d/rtl-sdr.rules
+        mode: '0644'
+    - name: ldconfig
+      become: true
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/librtlsdr/build'
+      with_items:
+        - ldconfig
+      changed_when: false
+    - name: modprobe driver block
+      become: true
+      ansible.builtin.blockinfile:
+        path: /etc/modprobe/no-rtl.conf
+        block: |
+          blacklist dvb_usb_rtl28xxu
+          blacklist rtl2832
+        create: true
+        mode: '0644'
+    - name: clone goestools
+      ansible.builtin.git:
+        repo: https://github.com/pietern/goestools.git
+        dest: "{{ ansible_env.HOME/Downloads/goestools }}"
+        version: main
+        recursive: yes
+        update: yes
+    - name: goestools/build folder
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Downloads/goestools/build"
+        state: directory
+        mode: '0755'
+    - name: cmake goestools
+      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/goestools/build'
+      with_items:
+        - cmake -j{{ ansible_facts['processor_count'] }} -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+      changed_when: false
+    - name: make install
+      become: true
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/goestools/build"
+        cmd: make -j{{ ansible_facts['processor_count'] }} install
+        creates: /usr/bin/goesproc
