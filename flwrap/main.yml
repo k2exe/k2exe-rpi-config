@@ -1,6 +1,6 @@
 ---
 # file: flwrap/main.yml
-- name: flwrap
+- name: Flwrap
   hosts: localhost
   connection: localhost
   tasks:
@@ -13,24 +13,24 @@
         fi
       register: flwrap_version
       changed_when: false
-    - name: set flrwap installed version
+    - name: Set flrwap installed version
       ansible.builtin.set_fact: flwrap="{{ flwrap_version.stdout }}"
 
-    - name: check latest flwrap version from sourceforge # noqa risky-shell-pipe
+    - name: Check latest flwrap version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/flwrap/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar.gz" '{print $1}'
       register: flwrap_online
       changed_when: false
-    - name: set flwrap latest version
+    - name: Set flwrap latest version
       ansible.builtin.set_fact: newflwrap="{{  flwrap_online.stdout  }}"
 
-    - name: install or update to the latest version of flwrap
+    - name: Install or update to the latest version of flwrap
       ansible.builtin.set_fact:
         flwrap_install: "{{ 'true' if ( flwrap != newflwrap ) else 'false' }}"
-    - name: debug flwrap_install
+    - name: Debug flwrap_install
       ansible.builtin.debug: msg="{{ flwrap_install }}"
 
-    - name: download flwrap and extract
+    - name: Download flwrap and extract
       ansible.builtin.unarchive:
         src: https://sourceforge.net/projects/fldigi/files/flwrap/flwrap-{{ newflwrap }}.tar.gz
         dest: "{{ ansible_env.HOME }}/Downloads/"
@@ -44,20 +44,20 @@
         - ./configure
       when: flwrap_install
 
-    - name: make flwrap
+    - name: Make flwrap
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
       with_items:
         - make -j{{ ansible_facts['processor_count'] }}
       when: flwrap_install
 
-    - name: install flwrap
+    - name: Install flwrap
       become: true
       ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
       with_items:
         - make install
       when: flwrap_install
 
-    - name: install flwrap desktop icon
+    - name: Install flwrap desktop icon
       ansible.builtin.copy:
         src: flwrap.desktop
         dest: "{{ ansible_env.HOME }}/Desktop/flwrap.desktop"
