@@ -52,9 +52,11 @@
         dest: "{{ ansible_env.HOME }}/Downloads/Xastir"
         version: master
     - name: Bootstrap xastir
-      ansible.builtin.command: 'bash {{ item }} chdir={{ ansible_env.HOME }}/Downloads/Xastir/'
-      with_items:
-        - ./bootstrap.sh
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/Xastir/"
+        cmd: bash ./bootstrap.sh
+        creates: "{{ ansible_env.HOME }}/Downloads/Xastir/src/Makefile.in"
       when: xastir_install
     - name: Build folder
       ansible.builtin.file:
