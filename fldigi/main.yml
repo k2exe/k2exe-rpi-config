@@ -98,7 +98,7 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
         cmd: make install
-        creates: /usr/local/bin/fldigi
+        changed_when: false
       when: fldigi_install
 
     - name: Install fldigi desktop icon
