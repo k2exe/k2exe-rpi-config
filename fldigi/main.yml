@@ -16,9 +16,9 @@
       register: fldigi_version
       changed_when: false
     - name: Debug installed fldigi version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         fldigi: "{{ fldigi_version.stdout }}"
-        
+
     - name: Check latest fldigi version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
@@ -26,7 +26,7 @@
       changed_when: false
 
     - name: Debug latest fldigi version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         newfldigi: "{{ fldigi_online.stdout }}"
 
     - name: Install or update to the latest version of fldigi
@@ -34,7 +34,7 @@
         fldigi_install: "{{ 'true' if (fldigi != newfldigi) else 'false' }}"
 
     - name: Debug install status
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ fldigi_install }}"
 
     - name: Install fldigi dependencies
