@@ -14,7 +14,7 @@
       register: flmsg_version
       changed_when: false
     - name: Debug installed flidigi version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         flmsg: "{{ flmsg_version.stdout }}"
 
     - name: Check latest flmsg version from sourceforge # noqa risky-shell-pipe
