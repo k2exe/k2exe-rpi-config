@@ -17,7 +17,7 @@
         wsjtx: "{{ wsjtx_installed.stdout }}"
     - name: Debug wsjtx_installed
       ansible.builtin.debug:
-        msg: {{ wsjtx }}
+        msg: "{{ wsjtx }}"
 
     - name: Latest wsjt-x version online # noqa risky-shell-pipe
       ansible.builtin.shell: |
