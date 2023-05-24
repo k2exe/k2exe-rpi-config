@@ -14,7 +14,7 @@
       register: flrig_version
       changed_when: false
     - name: Set fldigi installed version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         flrig: "{{ flrig_version.stdout }}"
 
     - name: Check latest flrig version from sourceforge # noqa risky-shell-pipe
@@ -23,13 +23,14 @@
       register: flrig_online
       changed_when: false
     - name: Set latest flrig version
-      ansible.builtin.set_fact: newflrig="{{  flrig_online.stdout }}"
+      ansible.builtin.set_fact: 
+        newflrig: "{{  flrig_online.stdout }}"
 
     - name: Install or update to the latest version of flrig
       ansible.builtin.set_fact:
         flrig_install: "{{ 'true' if (flrig != newflrig) else 'false' }}"
     - name: Debug flrig_install
-      ansible.builtin.debug: 
+      ansible.builtin.debug:
         msg: "{{ flrig_install }}"
 
     - name: Download flrig and extract
