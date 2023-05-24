@@ -5,7 +5,7 @@
   connection: localhost
   tasks:
     - name: Set piardop version
-      ansible.builtin.set_fact: 
+      ansible.builtin.set_fact:
         piardop: "NOT INSTALLED"
     - name: Latest piardop version check # noqa risky-shell-pipe
       ansible.builtin.shell: |
