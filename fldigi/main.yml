@@ -1,6 +1,7 @@
 ---
 # file: fldigi/main.yml
-- import_playbook: ../hamlib/main.yml
+- name: Install hamlib first if required
+  ansible.builtin.import_playbook: ../hamlib/main.yml
 
 - name: Fldigi
   hosts: localhost
@@ -14,10 +15,10 @@
         fi
       register: fldigi_version
       changed_when: false
-
     - name: Debug installed fldigi version
-      ansible.builtin.set_fact: fldigi="{{ fldigi_version.stdout }}"
-
+      ansible.builtin.set_fact: 
+        fldigi: "{{ fldigi_version.stdout }}"
+        
     - name: Check latest fldigi version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s https://sourceforge.net/projects/fldigi/files/fldigi/ | grep .tar.gz | head -1 | awk -F "-" '{print $2}' | awk -F ".tar" '{print $1}'
@@ -25,13 +26,16 @@
       changed_when: false
 
     - name: Debug latest fldigi version
-      ansible.builtin.set_fact: newfldigi="{{ fldigi_online.stdout }}"
+      ansible.builtin.set_fact: 
+        newfldigi: "{{ fldigi_online.stdout }}"
 
     - name: Install or update to the latest version of fldigi
       ansible.builtin.set_fact:
-        fldigi_install: "{{ 'true' if ( fldigi != newfldigi ) else 'false' }}"
+        fldigi_install: "{{ 'true' if (fldigi != newfldigi) else 'false' }}"
+
     - name: Debug install status
-      ansible.builtin.debug: msg="{{ fldigi_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ fldigi_install }}"
 
     - name: Install fldigi dependencies
       become: true
@@ -73,22 +77,28 @@
       when: fldigi_install
 
     - name: ./configure fldigi
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - ./configure
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: ./configure
+        creates: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}/config.status"
       when: fldigi_install
 
     - name: Make fldigi
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}/src/fldigi"
       when: fldigi_install
 
     - name: Install fldigi
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/fldigi-{{ newfldigi }}"
+        cmd: make install
+        creates: /usr/local/bin/fldigi
       when: fldigi_install
 
     - name: Install fldigi desktop icon
