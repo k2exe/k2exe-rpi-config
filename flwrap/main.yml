@@ -14,7 +14,8 @@
       register: flwrap_version
       changed_when: false
     - name: Set flrwap installed version
-      ansible.builtin.set_fact: flwrap="{{ flwrap_version.stdout }}"
+      ansible.builtin.set_fact:
+        flwrap: "{{ flwrap_version.stdout }}"
 
     - name: Check latest flwrap version from sourceforge # noqa risky-shell-pipe
       ansible.builtin.shell: |
@@ -22,13 +23,15 @@
       register: flwrap_online
       changed_when: false
     - name: Set flwrap latest version
-      ansible.builtin.set_fact: newflwrap="{{  flwrap_online.stdout  }}"
+      ansible.builtin.set_fact: 
+        newflwrap: "{{  flwrap_online.stdout  }}"
 
     - name: Install or update to the latest version of flwrap
       ansible.builtin.set_fact:
-        flwrap_install: "{{ 'true' if ( flwrap != newflwrap ) else 'false' }}"
+        flwrap_install: "{{ 'true' if (flwrap != newflwrap) else 'false' }}"
     - name: Debug flwrap_install
-      ansible.builtin.debug: msg="{{ flwrap_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ flwrap_install }}"
 
     - name: Download flwrap and extract
       ansible.builtin.unarchive:
@@ -39,22 +42,28 @@
       when: flwrap_install
 
     - name: ./configure flwrap
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
-      with_items:
-        - ./configure
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}"
+        cmd: ./configure
+        creates: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}/config.status"
       when: flwrap_install
 
     - name: Make flwrap
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}/src/flwrap"
       when: flwrap_install
 
     - name: Install flwrap
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/flwrap-{{ newflwrap }}"
+        cmd: make install
+      changed_when: false
       when: flwrap_install
 
     - name: Install flwrap desktop icon
