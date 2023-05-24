@@ -62,7 +62,7 @@
     - name: clone goestools
       ansible.builtin.git:
         repo: https://github.com/pietern/goestools.git
-        dest: "{{ ansible_env.HOME/Downloads/goestools }}"
+        dest: "{{ ansible_env.HOME }}/Downloads/goestools"
         version: main
         recursive: yes
         update: yes
