@@ -1,6 +1,7 @@
 ---
 # file: openwebrx/main.yml
-- import_playbook: ../docker/main.yml
+- name: Import Docker playbook
+  ansible.builtin.import_playbook: ../docker/main.yml
 
 - name: Openwebrx
   hosts: localhost
