@@ -21,7 +21,10 @@
 
     - name: Copy configs
       become: true
-      ansible.builtin.copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
+      ansible.builtin.copy: 
+        src: {{ item.src }}
+        dest: {{ item.dest }}
+        mode: '0644'
       with_items:
         - { src: 'files/k2exegateway', dest: '/etc/tinc/k2exe/hosts' }
 
