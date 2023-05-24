@@ -61,14 +61,18 @@
       when: tqsl_install
 
     - name: Make tqsl
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
-      with_items:
-        - make -j{{ ansible_facts['processor_count'] }}
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}"
+        cmd: make -j{{ ansible_facts['processor_count'] }}
+        creates: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}/app/tqsl"
       when: tqsl_install
 
     - name: Install tqsl
       become: true
-      ansible.builtin.command: '{{ item }} chdir={{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}'
-      with_items:
-        - make install
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/tqsl-{{ newtqsl }}"
+        cmd: make install
+      changed_when: false
       when: tqsl_install
