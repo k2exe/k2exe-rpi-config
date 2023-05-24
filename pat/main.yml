@@ -13,7 +13,8 @@
       register: pat_version
       changed_when: false
     - name: Set installed pat version
-      ansible.builtin.set_fact: pat="{{ pat_version.stdout }}"
+      ansible.builtin.set_fact: 
+        pat: "{{ pat_version.stdout }}"
 
     - name: Check latest pat version # noqa risky-shell-pipe
       ansible.builtin.shell: |
@@ -22,13 +23,15 @@
       register: pat_online
       changed_when: false
     - name: Set latest pat version
-      ansible.builtin.set_fact: newpat="{{ pat_online.stdout }}"
+      ansible.builtin.set_fact: 
+        newpat: "{{ pat_online.stdout }}"
 
     - name: Install or update pat
       ansible.builtin.set_fact:
         pat_install: "{{ 'true' if (pat != newpat) else 'false' }}"
     - name: debug pat_install
-      ansible.builtin.debug: msg="{{ pat_install }}"
+      ansible.builtin.debug: 
+        msg: "{{ pat_install }}"
 
     - name: Download pat deb file and install
       become: true
