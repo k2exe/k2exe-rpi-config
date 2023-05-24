@@ -95,5 +95,5 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/hamlib-{{ newhamlib }}"
         cmd: make install
-        changed_when: false
+      changed_when: false
       when: hamlib_install
