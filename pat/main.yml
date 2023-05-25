@@ -35,7 +35,7 @@
     - name: Dpkg architecture
       ansible.builtin.command:
       args:
-        cmd: dpkg --package-architecture
+        cmd: dpkg --print-architecture
       register: arch
     - name: Download pat deb file and install
       become: true
