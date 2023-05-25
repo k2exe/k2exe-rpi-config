@@ -89,14 +89,14 @@
       ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
-        cmd: cmake -j{{ ansible_fact['processor_count'] }} ..
+        cmd: cmake -j{{ ansible_facts['processor_count'] }} ..
         creates: "{{ ansible_env.HOME }}/Downloads/js8call/build/Makefile"
 
     - name: Make js8call
       ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
-        cmd: make -j{{ ansible_fact['processor_count'] }} ..
+        cmd: make -j{{ ansible_facts['processor_count'] }} ..
         creates: "{{ ansible_env.HOME }}/Downloads/js8call/build/js8call"
 
     - name: Make install
