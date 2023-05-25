@@ -36,7 +36,7 @@
       ansible.builtin.command:
       args:
         cmd: dpkg --package-architecture
-        register: arch
+      register: arch
     - name: Download pat deb file and install
       become: true
       ansible.builtin.apt:
