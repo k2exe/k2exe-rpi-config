@@ -27,9 +27,10 @@
       changed_when: false
     - name: Get arch from dpkg
       ansible.builtin.command:
-      args: 
+      args:
         cmd: dpkg --print-architecture
-      register: arch 
+      register: arch
+      changed_when: false
     - name: Set latest wsjt-x version
       ansible.builtin.set_fact:
         wsjtx_url: "https://wsjt.sourceforge.io/downloads/wsjtx_{{ wsjtx_online.stdout }}_{{ arch.stdout }}.deb"
