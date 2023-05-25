@@ -32,9 +32,12 @@
     - name: Debug pat_install
       ansible.builtin.debug:
         msg: "{{ pat_install }}"
-
+    - name: Dpkg architecture
+      args:
+        cmd: dpkg --package-architecture
+        register: arch
     - name: Download pat deb file and install
       become: true
       ansible.builtin.apt:
-        deb: https://github.com/la5nta/pat/releases/download/v{{ newpat }}/pat_{{ newpat }}_linux_armhf.deb
+        deb: https://github.com/la5nta/pat/releases/download/v{{ newpat }}/pat_{{ newpat }}_linux_{{ arch.stdout }}.deb
       when: pat_install
