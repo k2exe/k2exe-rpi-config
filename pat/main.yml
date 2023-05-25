@@ -33,6 +33,7 @@
       ansible.builtin.debug:
         msg: "{{ pat_install }}"
     - name: Dpkg architecture
+      ansible.builtin.command:
       args:
         cmd: dpkg --package-architecture
         register: arch
