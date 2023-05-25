@@ -19,7 +19,7 @@
     - name: Latest js8call version check # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s http://files.js8call.com/latest.html | grep "<strong>" |
-        grep -o [0-9].[0-9]
+        grep -oP "(\d+)([.]\d+)+"
       register: js8call_online
       changed_when: false
     - name: Set latest js8call version
@@ -29,7 +29,7 @@
     - name: Get js8call download link # noqa risky-shell-pipe
       ansible.builtin.shell: |
         curl -s http://files.js8call.com/latest.html |
-        grep -o "http://files.js8call.com/[0-9].[0-9].[0-9]/js8call_[0-9].[0-9].[0-9]_armhf.deb" | head -n 1
+        grep -oP "(http://files.js8call.com/)(\d+)([.]\d+)+(/js8call-)(\d+)([.]\d+)+(\.tgz)" | head -n 1
       register: js8call_download
       changed_when: false
     - name: Set installed js8call version
@@ -47,25 +47,64 @@
       become: true
       ansible.builtin.apt:
         pkg:
+          - autoconf
+          - automake
+          - cmake
+          - clang
           - extra-xdg-menus
           - gfortran
+          - libfftw3-dev
+          - libgfortran-10-dev
           - libqt5multimedia5
           - libqt5multimedia5-plugins
           - libqt5multimediawidgets5
           - libqt5serialport5
+          - libtool
+          - libudev-dev
+          - libusb-1.0-0-dev
+          - pkg-config
+          - qtmultimedia5-dev
+          - texinfo
         update_cache: true
         cache_valid_time: 3600
       when: js8call_install
 
-    - name: Download js8call deb file and install
-      become: true
-      ansible.builtin.apt:
-        deb: "{{ js8call_url }}"
+    - name: Import hamlib dependency
+      ansible.builtin.import_playbook: ../hamlib/main.yml
+
+    - name: Download js8call and extract
+      ansible.builtin.unarchive:
+        src: "{{ js8call_url }}"
+        dest: "{{ ansible_env.HOME }}/Downloads/"
+        remote_src: true
+        creates: "{{ ansible_env.HOME }}/Downloads/js8call"
       when: js8call_install
 
-    - name: Install js8call desktop icon
-      ansible.builtin.copy:
-        src: js8call.desktop
-        dest: "{{ ansible_env.HOME }}/Desktop/js8call.desktop"
-        mode: "0644"
+    - name: Build folder
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Downloads/js8call/build"
+        state: directory
+        mode: '0755'
+        
+    - name: Cmake js8call
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
+        cmd: cmake -j{{ ansible_fact['processor_count'] }} ..
+        creates: "{{ ansible_env.HOME }}/Downloads/js8call/build/Makefile"
+        
+    - name: Make js8call
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
+        cmd: make -j{{ ansible_fact['processor_count'] }} ..
+        creates: "{{ ansible_env.HOME }}/Downloads/js8call/build/js8call"
+
+    - name: Make install
+      become: true
+      ansible.builtin.command:
+      args:
+        chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
+        cmd: make install
+      changed_when: false 
       when: js8call_install
