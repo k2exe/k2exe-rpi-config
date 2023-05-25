@@ -1,5 +1,7 @@
 ---
 # file: js8call/main.yml
+- name: Import hamlib dependency
+  ansible.builtin.import_playbook: ../hamlib/main.yml
 - name: Js8call
   hosts: localhost
   connection: localhost
@@ -68,9 +70,6 @@
         update_cache: true
         cache_valid_time: 3600
       when: js8call_install
-
-    - name: Import hamlib dependency
-      ansible.builtin.import_playbook: ../hamlib/main.yml
 
     - name: Download js8call and extract
       ansible.builtin.unarchive:
