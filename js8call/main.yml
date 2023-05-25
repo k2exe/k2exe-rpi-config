@@ -84,14 +84,14 @@
         path: "{{ ansible_env.HOME }}/Downloads/js8call/build"
         state: directory
         mode: '0755'
-        
+
     - name: Cmake js8call
       ansible.builtin.command:
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
         cmd: cmake -j{{ ansible_fact['processor_count'] }} ..
         creates: "{{ ansible_env.HOME }}/Downloads/js8call/build/Makefile"
-        
+
     - name: Make js8call
       ansible.builtin.command:
       args:
@@ -105,5 +105,5 @@
       args:
         chdir: "{{ ansible_env.HOME }}/Downloads/js8call/build"
         cmd: make install
-      changed_when: false 
+      changed_when: false
       when: js8call_install
