@@ -48,7 +48,7 @@
     - name: Make direwolf
       ansible.builtin.command:
       args:
-        chdir: "chdir={{ ansible_env.HOME }}/Downloads/direwolf/build"
+        chdir: "{{ ansible_env.HOME }}/Downloads/direwolf/build"
         cmd: make -j{{ ansible_facts['processor_count'] }}
         creates: "{{ ansible_env.HOME }}/Downloads/direwolf/build/src/direwolf"
       when: direwolf_install
