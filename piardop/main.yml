@@ -30,7 +30,7 @@
 
     - name: .asoundrc config
       ansible.builtin.file:
-        src: .asoundrc
+        src: files/.asound
         dest: "{{ ansible_env.HOME }}/.asoundrc"
         state: hard
         mode: '0755'
