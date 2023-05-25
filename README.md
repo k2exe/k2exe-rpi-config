@@ -9,6 +9,7 @@ I created these to improve upon some of the other raspberry pi installer scripts
 - Flmsg
 - Flrig
 - Flwrap
+- Hamlib
 - JS8call
 - Pat(winlink)
 - Piardop
@@ -21,9 +22,15 @@ The following have ansible playbooks but are not included in the default playboo
 
 - Ampr-ripd
 - Docker
+- GPS time sync (ublox support) plugin in dongle during install
+- Goestools
+- JNOS
 - Openwebrx (docker container)
+- Nodered
+- Pardop
+- Pilinbpq
 - RTC-ds-1307 (real time clock module)
-- Tinc (Onondaga County AMPRnet config) 
+- ~~Tinc (Onondaga County AMPRnet config)~~
 
 ## Install
 
@@ -35,9 +42,9 @@ My procedure:
 login via ssh
 sudo raspi-config
 do the following:
-change password for pi user
+change password for user
 setup hostname
-expand filesystem to fill sd card
+expand filesystem to fill sd/ssd card
 configure timezone
 configure wireless region
 

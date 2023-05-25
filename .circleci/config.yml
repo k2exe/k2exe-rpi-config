@@ -33,7 +33,6 @@ jobs:
       - run: ansible-lint piardop/main.yml
       - run: ansible-lint rtc-ds1307/main.yml
       - run: ansible-lint rtl-sdr/main.yml
-      - run: ansible-lint tinc/main.yml
       - run: ansible-lint tqsl/main.yml
       - run: ansible-lint wsjtx/main.yml
       - run: ansible-lint xastir/main.yml

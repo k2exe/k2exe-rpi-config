@@ -23,10 +23,6 @@
   import_playbook: hamlib/main.yml
   tags:
     - hamlib
-- name: Run jnos playbook
-  import_playbook: jnos/main.yml
-  tags:
-    - jnos
 - name: Run js8call playbook
   import_playbook: js8call/main.yml
   tags:
