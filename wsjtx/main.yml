@@ -29,7 +29,7 @@
       ansible.builtin.set_fact:
         wsjtx_32url: "https://wsjt.sourceforge.io/downloads/wsjtx_{{ wsjtx_online.stdout }}_armhf.deb"
         wsjtx_64url: "https://wsjt.sourceforge.io/downloads/wsjtx_{{ wsjtx_online.stdout }}_arm64.deb"
-        wsjtx_url: {{ wsjtx_64url if ansible_facts['ansible_architecture'] == 'aarch64' else wsjtx_32url }}
+        wsjtx_url: "{{ wsjtx_64url if ansible_facts['ansible_architecture'] == 'aarch64' else wsjtx_32url }}"
     - name: Debug wsjtx_url
       ansible.builtin.debug:
         msg: "{{ wsjtx_url }}"
