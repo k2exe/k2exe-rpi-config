@@ -61,6 +61,7 @@
           - libqt5multimedia5-plugins
           - libqt5multimediawidgets5
           - libqt5serialport5
+          - libqt5serialport5-dev
           - libtool
           - libudev-dev
           - libusb-1.0-0-dev
