@@ -28,7 +28,7 @@
     - name: Get arch from dpkg
       ansible.builtin.command:
       args: 
-        cmds: dpkg --print-architecture
+        cmd: dpkg --print-architecture
       register: arch 
     - name: Set latest wsjt-x version
       ansible.builtin.set_fact:
